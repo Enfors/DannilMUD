@@ -1,0 +1,8 @@
+		     README for the src directory
+		     ============================
+
+Subdirectories, and their purpose:
+
+  * cmds   - MUD commands.
+  * objs   - MUD objects.
+  * std    - System components such as networking, user management, etc.

@@ -1,0 +1,258 @@
+#+STARTUP: hidestars
+* Technical design
+** Conventions
+*** Directories
+Directories should have short, logical names that make them easy to
+remember, and make paths short. All lowercase letters.
+
+*** Files
+All filenames (except README-files and the like) should consist of all
+lowercase letters (as well as underscores and such as necessary).
+
+*** Classes
+Class names consist of a series of one or more words, where the first
+letter of each word is capitalized. The rest of the letters are
+lowercase. Example: UserManager
+
+*** Objects
+Object names consist of one or more all lowercase words, separated by
+underscores. Example: user_manager
+
+*** Functions
+Function names consist of one or more all lowercase words, separated
+by underscores. Example: send_message. Class functions that are
+"private" - meant to only be called from within the object - have a
+name beginning with an underscore. Only other member functions in the
+same class are allowed to call such functions.
+
+*** Variables
+Variable names consist of one or more all lowercase words, separated
+by underscores. Example: user_name
+
+** File and module structure
+
+** Logging
+** Code structure
+*** Game objects
+Game objects are objects that appear in the game, such as room,
+weapons, characters, monsters, clothes, and so on.
+
+**** Attributes
+All game objects have a set of attributes, stored in a
+dictionary. Each attribute has a name (key) and a value.
+
+**** The game object class tree
+All game objects are objects of a class that inherits from a class in
+the game object class tree (the GOCT, for short). The root of the GOCT
+is the "object" class. Game object classes can inherit from any class
+in the GOCT, not just the leaves.
+
+A game object can never change which class in the GOCT that it
+inherits from. Therefore, care must be taken when adding classes to
+the GOCT so that an game object will never suffer because it can't
+change its parent. For example, if the roof collapses in a house, that
+room will change from being "indoors" to "outdoors". Since this is a
+change that must be allowed, there can never be separate classes for
+indoor and outdoor rooms. Instead, that should be controlled by an
+attribute in the "room" class.
+
+Likewise, a humanoid druid could conceivably transform himself into a
+bear. Therefore, "humanoid" should not be a class in the GOCT.
+
+***** Obj
+****** Room
+****** Living
+****** Equipment
+******* Wearable
+******** Armour
+******** Clothing
+******* Weapon
+******** Ranged_weapon
+******** Melee_weapon
+
+** Relationship between DannilMUD and HollowTreeMUD
+I'm currently leaning towards not dividing the game into "driver" and
+"mudlib". The advantage of the division would be that it would be
+easier to make another game after HollowTreeMUD, but that's unlikely
+to ever happen. The disadvantage would be that it would create an
+artificial barrier in the code, with some parts of the code on one
+side, and the rest of the code on the other side. That would make
+coding more difficult.
+
+Therefore, I'm marking the following subsections as obsolete.
+
+*** DannilMUD (obsolete)
+DannilMUD is the driver. It doesn't contain a game, just the ability
+to make and run one. DannilMUD knows what rooms, characters, objects,
+weapons etc are, but it doesn't contain any of them. It also has a
+generic combat system that is not tied to any specific theme.
+
+The driver needs a config file. This config file tells the driver
+where to find the mudlib directory, among other things. If you change
+this to point to another mudlib and restart the driver, a totally
+different game will be loaded - different characters, different world,
+and so on.
+
+The driver contains code to handle rooms, inventory, messages and
+such. It also provides some basic commands like "say", "go", and
+"quit". The mudlib provides the rest of the commands.
+
+**** Characters
+***** Skill system
+The driver contains the skill system, but no skills.
+
+*** Hollow Tree MUD (obsolete)
+Hollow Tree MUD is the game. It is referred to as a "mudlib", like in
+LP-MUDs. It contains the actual rooms, fantasy weapons, spells, etc
+that are part of the game.
+
+The mudlib consists of a directory. Inside it, is a file called
+config.txt. It contains the name of the game, and the port number to
+listen to (among other things).
+
+Since the driver only provides a very limited array of commands, it is
+up the mudlib to provide the rest.
+
+*** TODO Draw line between driver and lib (obsolete)
+Where do I draw the line between driver and lib when it comes to
+skills? Are all skills in the lib, and just the skill system in the
+driver? Probably, yes.
+
+
+* Game design
+** Characters
+*** Stats
+Stats are intrinsic values that all characters have. They are
+different from skills in that skills are something you learn.
+
+Stat values range from 0 and upwards without a set maximum. The
+typical average value for a humanoid is 10.
+
+**** Agility
+How "flexible" the character's body is. Not sure if I want to keep
+this stat thought. I'm not sure if any significan amount of skills
+would be connected to it.
+
+**** Dexterity
+"Body skill", so to speak; determines how skilled the character is in
+using his body in various ways.
+
+**** Endurance
+Determines how long the character can perform manual labor without
+becoming exhausted.
+
+**** Constitution
+Determines how much damage a character can take without dying.
+
+**** Strength
+Determines how strong the character is.
+
+**** Perception
+Determines the character's ability to preceive things in his
+surroundings.
+
+**** Focus
+Determines the character's ability to concentrate.
+
+**** Intelligence
+How intelligen the character is.
+
+**** Wisdom
+Determines how much the character knows. Due to the fact that I'm
+planning to implement a knowledge system that keeps track of exactly
+what a character knows, it's bebatable whether or not to keep this
+stat. But the knowledge system can't possibly contain everything, so I
+might keep this stat anyway.
+     
+*** Skills
+Skill values range from 0 (don't have the skill) to a maximum of 20.
+
+**** Skill roll (sr) and mofidiers
+When a skill roll is made, a modifier is used. The modifier represents
+the difficulty of this particular task. A positive modifier meas that
+the task is relatively easy, while a negative modifier means that the
+task is relatively difficult. To make a skill roll, roll 3d6. If the
+result is lower than or equal to the character's skill value plus the
+modifier (which is typically between -10 and +10), then the roll was a
+sucess. In other words:
+
+ - result = skill value + modifier - 3d6
+
+If result is a positive number or zero, the skill roll succeeds by
+that many points. Otherwise, it fails.
+
+**** Skill costs
+| Stat | Very easy | Easy | Average | Hard | Very hard |
+|------+-----------+------+---------+------+-----------|
+|   -6 |           |      |         |      |         1 |
+|   -5 |           |      |         |    1 |         1 |
+|   -4 |           |      |       1 |    1 |         2 |
+|   -3 |           |    1 |       1 |    2 |         2 |
+|   -2 |         1 |    1 |       2 |    2 |         2 |
+|   -1 |         1 |    2 |       2 |    2 |         3 |
+|    0 |         2 |    2 |       2 |    3 |         3 |
+|   +1 |         2 |    2 |       3 |    3 |         4 |
+|   +2 |         2 |    3 |       3 |    4 |         5 |
+|   +3 |         3 |    3 |       4 |    5 |         6 |
+|   +4 |         3 |    4 |       5 |    6 |         8 |
+|   +5 |         4 |    5 |       6 |    8 |        10 |
+|   +6 |         5 |    6 |       8 |   10 |        13 |
+|   +7 |         6 |    8 |      10 |   13 |        17 |
+
+** Combat
+*** Bodies
+**** Humanoid
+****** Humanoid body configuration
+
+           Head
+            10%
+             |
+Right arm--Chest--Left arm
+   10%      40%     10%
+           /   \
+  Right leg     Left leg
+     15%           15%
+
+The default target is always the chest, unless the attacker specifies
+otherwise. If the attack misses its indended target, there's a chance
+that it might hit another body part. To determine this, the
+percentages of all other body parts are assembled into a table. Let's
+say an attack aimed at the chest misses. Then, a table like this will
+be assembled:
+
+| Body part | Min | Max |
+|-----------+-----+-----|
+| Head      |   1 |  10 |
+| Right arm |  11 |  20 |
+| Left arm  |  21 |  30 |
+| Right leg |  31 |  44 |
+| Left leg  |  45 |  60 |
+| Miss      |  61 | 100 |
+
+A d100 is used to determine which body part is hit, if any.
+
+However, the chest is a special case since it is "adjacent" to all
+other body parts. If the body part is "further" away than that, it's
+chance of being hit is halved (round downards) for each successive
+"step". So if you aim at the head and miss, there's a 40% chance of
+hitting the chest instead, but only a 7% chance (half of 15%) of
+hitting the left leg.
+
+*** Formulas
+*** Missile weapon accuracy (accuracy)
+- Result = sr + accuracy + target's size - 10
+
+** Ideas
+*** Sizes
+| Size | Description                 | Animal                    |
+|------+-----------------------------+---------------------------|
+|    1 | Coin                        | Beetle, fly               |
+|    2 | Fist-sized object, A4 paper | Squirrel, rat, small bird |
+|    3 | Shortsword, book            | Rabbit                    |
+|    4 | Longsword, shield           | Cat, large bird           |
+|    5 | Dog                         | Dog, sheep, deer          |
+|    6 | Dwarf                       | Wolf                      |
+|    7 | Human                       | Pony, human               |
+|    8 | Orc                         | Cow                       |
+|    9 | Horse, bear                 | Horse, bear               |
+|------+-----------------------------+---------------------------|
