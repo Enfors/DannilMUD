@@ -1,9 +1,9 @@
-#+STARTUP: hidestars
 * Technical design
 ** Conventions
 *** Directories
 Directories should have short, logical names that make them easy to
-remember, and make paths short. All lowercase letters.
+remember, and make paths short. All lowercase letters. Words are
+separated with an underscore.
 
 *** Files
 All filenames (except README-files and the like) should consist of all
@@ -21,9 +21,9 @@ underscores. Example: user_manager
 *** Functions
 Function names consist of one or more all lowercase words, separated
 by underscores. Example: send_message. Class functions that are
-"private" - meant to only be called from within the object - have a
-name beginning with an underscore. Only other member functions in the
-same class are allowed to call such functions.
+"private" - meant to only be called from within the object that
+defines them - have a name beginning with an underscore. Only other
+member functions in the same class are allowed to call such functions.
 
 *** Variables
 Variable names consist of one or more all lowercase words, separated
