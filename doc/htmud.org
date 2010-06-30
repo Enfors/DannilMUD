@@ -30,7 +30,9 @@ Variable names consist of one or more all lowercase words, separated
 by underscores. Example: user_name
 
 ** File and module structure
-
+** Code architecture
+*** Overview
+The driver code is divided into several parts.
 ** Logging
 ** Code structure
 *** Game objects

@@ -1,11 +1,11 @@
 # user.py by Dannil
 
-import pickle
+import os, pickle
 
 class User:
     def __init__(self, name):
         self.set_name(name)
-        self.set_passwd(None)
+        self.load()
 
 
     def set_name(self, name):
@@ -31,14 +31,25 @@ class User:
     def save(self):
         if not len(self.name):
             raise SaveErrorNoName
-        file = open("user/%s" % self.query_name(), "w")
-        pickle.dump(self, file, 0)
+        file = open("user/%s" % self.query_name(), "wb")
+        #pickle.dump(self, file, 0)
+        pickle.dump(self, file)
         file.close()
-        print "[user] %s saved." % self.query_cap_name()
+        print("[user] %s saved." % self.query_cap_name())
 
 
     def load(self):
-        pass
+        if not len(self.name):
+            pass                # todo: do something interesting here
+
+        file_name = "user/%s" % self.query_name()
+        
+        if os.path.exists(file_name):
+            file = open("user/%s" % self.query_name(), "rb")
+            pickle.load(file)
+            file.close()
+            print("[user] %s loaded." % self.query_cap_name())
+
     
 
 class UserMan:

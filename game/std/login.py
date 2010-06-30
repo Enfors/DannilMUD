@@ -1,4 +1,4 @@
-# io.py by Dannil - the I/O functions for DannilMUD
+# login.py by Dannil - the login functions for DannilMUD
 
 import os
 
@@ -28,7 +28,8 @@ class Parser:
         # Remove trailing white space.
         text = text.rstrip("\r\n\t ")
         
-        apply(self.login_state_funcs[con.login_state], (con, text))
+        #apply(self.login_state_funcs[con.login_state], (con, text))
+        self.login_state_funcs[con.login_state](*(con, text))
 
 
     def parse_cmd(self, text):
@@ -65,18 +66,22 @@ Returns (cmd, (arg_list))."""
         
         if con.num_failed_logins > 3:
             con.write("I grow tired of you. Good bye.\n")
-            print "[io] User on fd %d from %s:%d failed to log in " \
-                "too many times." % (con.fd, con.remote_ip, con.remote_port)
+            print("[login] User on fd %d from %s:%d failed to log in "
+                  "too many times." % (con.fd, con.remote_ip, con.remote_port))
             con.end_after_write()
         else:
             con.write("Let's try this again. Login: ")
             
 
     def login_state_awaiting_passwd(self, con, text):
+        entered_passwd = text
         user = self.user_man.init_user(con.login)
-        user.load()
+        print("First: %s" % user.name)
 
-        if user.query_passwd() != text:
+        con.write("Entered password: '%s'" % entered_passwd)
+        con.write("Stored password : '%s'" % user.query_passwd())
+
+        if user.query_passwd() != text.strip():
             con.num_failed_logins += 1;
             con.write("Login incorrect. Please try again.\n\nLogin: ")
             con.login_state = "awaiting_login"
@@ -90,7 +95,7 @@ Returns (cmd, (arg_list))."""
     def login_state_idle(self, con, text):
         (cmd, args) = self.parse_cmd(text)
         
-        print "Cmd: %s" % cmd
+        print("Cmd: %s" % cmd)
         con.write("> ")
 
         

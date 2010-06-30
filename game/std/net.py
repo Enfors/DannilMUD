@@ -74,7 +74,6 @@ class Con:
     def end(self):
         """Ends a connection, closing the socket if need be."""
         self._dont_watch_anything()
-
         self.con_man.end_con(self)
 
         self.sock.shutdown(socket.SHUT_RDWR)
@@ -89,9 +88,11 @@ class Con:
     def _read_now(self):
         """Called when incoming data is available."""
         try:
-            self.read_buf += self.sock.recv(4096)
+            self.read_buf += self.sock.recv(4096).decode("UTF-8")
         except:
-            self.end()
+            print("[net] Error on socket (raise commented out)")
+            #self.end()
+            #raise
 
         text = self.read_buf
         self.read_buf = ""
@@ -105,7 +106,7 @@ class Con:
             return
 
         # Send data.
-        bytes_written = self.sock.send(self.write_buf)
+        bytes_written = self.sock.send(self.write_buf.encode("ascii"))
 
         # Remove the data that was actually sent from the buffer.
         self.write_buf = self.write_buf[bytes_written:]
@@ -204,8 +205,8 @@ class ConMan:
     def main_loop(self, input_handler):
         """Listens to the listen_socket, and handles connections."""
         self.listen_sock.listen(5)
-        print "[net] Server accepting connections on port %d." % \
-              self.listen_port
+        print("[net] Server accepting connections on port %d." % \
+                  self.listen_port)
 
         while 1:
             result = self.poller.poll()
@@ -217,9 +218,9 @@ class ConMan:
                     
                     new_sock, addr = self._fd2socket(fd).accept()
                     (ip, port) = new_sock.getpeername()
-                    print "[net] Accepted incoming connection on " \
-                        "fd %d from %s:%d." % \
-                        (new_sock.fileno(), ip, port)
+                    print("[net] Accepted incoming connection on " \
+                              "fd %d from %s:%d." %
+                        (new_sock.fileno(), ip, port))
                     self._new_con(new_sock, input_handler)
                 elif event == select.POLLIN:
                     self._read_event(fd)
@@ -243,8 +244,8 @@ class ConMan:
     
             
     def end_con(self, con):
-        print "[net] Closing connection on fd %d from %s:%d." % \
-            (con.sock.fileno(), con.remote_ip, con.remote_port)
+        print("[net] Closing connection on fd %d from %s:%d." % \
+            (con.sock.fileno(), con.remote_ip, con.remote_port))
         del self.socks[con.query_fd()]
         del self.cons[con.query_fd()]
 
@@ -278,7 +279,8 @@ class ConMan:
         #self.broadcast(con.read_buf + "\n")
 
         # Call the callback to handle this input.
-        apply(con.input_handler, (con, text))
+        #apply(con.input_handler, (con, text))
+        con.input_handler(*(con, text))
 
 
     def _write_event(self, fd):
@@ -290,8 +292,8 @@ class ConMan:
     def _error_event(self, fd):
         """Called when an error has occurred on a socket."""
         con = self.cons[fd]
-        print "[net] Error on fd %d from %s:%d." % \
-            (fd, con.remote_ip, con.remote_port)
+        print("[net] Error on fd %d from %s:%d." % 
+              (fd, con.remote_ip, con.remote_port))
         con.end()
         
         
@@ -299,4 +301,4 @@ class ConMan:
 if __name__ == "__main__":
     #con_man = ConMan(listen_port = 5000)
     #con_man.main_loop()
-    print "This file should not be started manually. Start main.py instead."
+    print("This file should not be started manually. Start main.py instead.")
