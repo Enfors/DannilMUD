@@ -5,7 +5,6 @@ import os, pickle
 class User:
     def __init__(self, name):
         self.set_name(name)
-        self.load()
 
 
     def set_name(self, name):
@@ -46,9 +45,9 @@ class User:
         
         if os.path.exists(file_name):
             file = open("user/%s" % self.query_name(), "rb")
-            pickle.load(file)
+            obj = pickle.load(file)
             file.close()
-            print("[user] %s loaded." % self.query_cap_name())
+            return obj
 
     
 
@@ -59,6 +58,7 @@ class UserMan:
 
     def init_user(self, name):
         user = User(name)
+        user = user.load()
         self.users[name] = user
         return user
 

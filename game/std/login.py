@@ -76,10 +76,6 @@ Returns (cmd, (arg_list))."""
     def login_state_awaiting_passwd(self, con, text):
         entered_passwd = text
         user = self.user_man.init_user(con.login)
-        print("First: %s" % user.name)
-
-        con.write("Entered password: '%s'" % entered_passwd)
-        con.write("Stored password : '%s'" % user.query_passwd())
 
         if user.query_passwd() != text.strip():
             con.num_failed_logins += 1;
