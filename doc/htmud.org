@@ -33,6 +33,22 @@ by underscores. Example: user_name
 ** Code architecture
 *** Overview
 The driver code is divided into several parts.
+
+**** Functionality brainstorm
+- Startup
+- Login
+- Network
+- Data storage
+- Command handling
+- Combat
+- NPC AI
+- Plant handling
+
+**** Things that need handling
+- Errors
+- Threads & locks
+- Logging
+
 ** Logging
 ** Code structure
 *** Game objects
