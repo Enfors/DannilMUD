@@ -1,6 +1,6 @@
 # char.py by Dannil
 
-living = __import__("living")
+import dm.std.living as living
 
 class Char(living.Living):
     def __init__(self):
