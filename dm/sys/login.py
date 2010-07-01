@@ -84,6 +84,7 @@ Returns (cmd, (arg_list))."""
         con.login_state = "idle"
         con.write("Welcome to DannilMUD, %s!\n> " % \
                   con.login.capitalize())
+        print("[net] %s logged in." % user.query_cap_name())
 
 
     def login_state_idle(self, con, text):
