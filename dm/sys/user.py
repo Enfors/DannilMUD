@@ -2,6 +2,8 @@
 
 import os, pickle
 
+import dm.std.living as living
+
 class User:
     def __init__(self, name):
         self.set_name(name)
@@ -48,6 +50,8 @@ class User:
             obj = pickle.load(file)
             file.close()
             return obj
+        else:
+            return self
 
     
 

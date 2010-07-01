@@ -5,7 +5,6 @@
 #
 
 import sys
-sys.path.insert(0, "std")
 
 class DannilMUD:
     def __init__(self):
@@ -14,20 +13,20 @@ class DannilMUD:
 
     def boot(self):
         print("")
-        print("    +--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--+")
-        print("    |                                                  |")
-        print("    | DannilMUD (C) Christer Enfors A.K.A. Dannil 2007 |")
-        print("    |                                                  |")
-        print("    +--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--+")
+        print("  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
+        print("  |                                                         |")
+        print("  | DannilMUD (C) Christer Enfors A.K.A. Dannil 2007 - 2010 |")
+        print("  |                                                         |")
+        print("  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
         print("")
         
         try:
             print("Commencing boot sequence.")
 
             print("    Importing modules...             ", end = " ")
-            net   = __import__("net")
-            login = __import__("login")
-            user  = __import__("user")
+            import dm.sys.net   as net
+            import dm.sys.login as login
+            import dm.sys.user  as user
             print("done.")
 
             print("    Initializing user manager...     ", end = " ")

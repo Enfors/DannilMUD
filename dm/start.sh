@@ -1,8 +1,10 @@
 #!/bin/sh
 # start.sh - Start script for DannilMUD
 
-cd $(dirname $0)
+gamedir=$(dirname $0)
+dmdir=$(cd $gamedir/..; pwd)
 
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+export PYTHONPATH=$PYTHONPATH:$dmdir
+echo PYTHONPATH=$PYTHONPATH
 
-./driver.py
+$gamedir/driver.py

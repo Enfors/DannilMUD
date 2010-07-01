@@ -57,8 +57,6 @@ Returns (cmd, (arg_list))."""
             con.login_state = "awaiting_passwd"
             return
         else:
-            con.write("len(text) : %d\n" % len(text))
-            con.write("received '%s'\n" % text)
             con.write("That user does not exist. " \
                       "Do you wish to create it?\nYes/no: ")
             con.login_state = "verify_create"

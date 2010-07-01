@@ -1,3 +1,4 @@
-game/user
-game/*.pyc
-game/std/*.pyc
+dm/user
+dm/*.pyc
+dm/std/*.pyc
+dm/sys/*.pyc
