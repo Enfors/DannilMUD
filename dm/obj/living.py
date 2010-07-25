@@ -1,6 +1,6 @@
 # living.py by Dannil
 
-import dm.std.obj as obj
+import dm.obj.obj as obj
 
 class Living(obj.Obj):
     def __init__(self):

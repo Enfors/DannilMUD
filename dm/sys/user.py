@@ -2,7 +2,7 @@
 
 import os, pickle
 
-import dm.std.living as living
+import dm.obj.living as living
 
 class User:
     def __init__(self, name):
