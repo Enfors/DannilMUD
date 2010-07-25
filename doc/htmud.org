@@ -35,19 +35,39 @@ by underscores. Example: user_name
 The driver code is divided into several parts.
 
 **** Functionality brainstorm
-- Startup
-- Login
-- Network
-- Data storage
-- Command handling
-- Combat
-- NPC AI
-- Plant handling
+| Functionality    | Main | Driver | Separate |
+|------------------+------+--------+----------|
+| Startup          | X    |        |          |
+| Network          |      | X?     |          |
+| Data storage     |      |        | X        |
+| Command handling |      | X      |          |
+| Combat           |      | X      |          |
+| NPC AI           |      |        | X        |
+| Plant handling   |      |        | X        |
+| Weather          |      |        | X        |
 
 **** Things that need handling
 - Errors
-- Threads & locks
+- Threads
+  - Information passing & locks
 - Logging
+- Components
+  - Information passing
+
+**** Code components
+***** Startup
+***** Network
+***** Data storage
+All objects that need to store data on secondary storage use a
+dictionary for that data. DM implements the ability to save and load
+this dictionary.
+
+***** Command handling
+***** Combat
+***** NPC AI
+***** Game daemons
+****** Plant handling
+****** Weather
 
 ** Logging
 ** Code structure
@@ -77,7 +97,7 @@ attribute in the "room" class.
 Likewise, a humanoid druid could conceivably transform himself into a
 bear. Therefore, "humanoid" should not be a class in the GOCT.
 
-***** Obj
+***** Base
 ****** Room
 ****** Living
 ****** Equipment
