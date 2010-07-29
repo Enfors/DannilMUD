@@ -30,26 +30,31 @@ class DannilMUD:
             print("done.")
 
             print("    Initializing user manager...     ", end = " ")
-            user_man = user.UserMan()
+            self.user_man = user.UserMan()
             print("done.")
 
             print("    Initializing parser...           ", end = " ")
-            parser = login.Parser(user_man, "cmds")
+            self.parser = login.Parser(self.user_man, "cmd")
             print("done.")
 
             print("    Initializing network interface...", end = " ")
-            con_man = net.ConMan(listen_port = 4851)
+            self.con_man = net.ConMan(listen_port = 4851)
             print("done.")
 
             print("Boot sequence completed.")
-            con_man.main_loop(parser.login_handler)
-
+            #con_man.main_loop(parser.login_handler)
+            self.main_loop()
 
         except KeyboardInterrupt:
             print("Shutting down.")
 
         except:
             raise
+
+    def main_loop(self):
+        while True:
+            self.con_man.handle_one_event(self.parser.login_handler)
+
 
 driver = DannilMUD()
 driver.boot()

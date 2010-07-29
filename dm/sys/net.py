@@ -197,6 +197,8 @@ class ConMan:
         self.socks  = { self.listen_sock.fileno(): self.listen_sock }
         self.cons   = {}
 
+        self.listen_sock.listen(5)
+
     
     #
     # Public functions
@@ -204,30 +206,34 @@ class ConMan:
 
     def main_loop(self, input_handler):
         """Listens to the listen_socket, and handles connections."""
-        self.listen_sock.listen(5)
-        print("[net] Server accepting connections on port %d." % \
-                  self.listen_port)
+        #self.listen_sock.listen(5)
+        #print("[net] Server accepting connections on port %d." % \
+        #          self.listen_port)
 
         while 1:
-            result = self.poller.poll()
-            for fd, event in result:
-                if fd == self.listen_sock.fileno() and \
-                        event == select.POLLIN:
-                    # We have an incomming connection request on the
-                    # listen socket. Time to accept it.
+            self.handle_one_event(input_handler)
+
+
+    def handle_one_event(self, input_handler):
+        result = self.poller.poll()
+        for fd, event in result:
+            if fd == self.listen_sock.fileno() and \
+                    event == select.POLLIN:
+                # We have an incomming connection request on the
+                # listen socket. Time to accept it.
                     
-                    new_sock, addr = self._fd2socket(fd).accept()
-                    (ip, port) = new_sock.getpeername()
-                    print("[net] Accepted incoming connection on " \
-                              "fd %d from %s:%d." %
-                        (new_sock.fileno(), ip, port))
-                    self._new_con(new_sock, input_handler)
-                elif event == select.POLLIN:
-                    self._read_event(fd)
-                elif event == select.POLLOUT:
-                    self._write_event(fd)
-                else:
-                    self._error_event(fd)
+                new_sock, addr = self._fd2socket(fd).accept()
+                (ip, port) = new_sock.getpeername()
+                print("[net] Accepted incoming connection on " \
+                          "fd %d from %s:%d." %
+                      (new_sock.fileno(), ip, port))
+                self._new_con(new_sock, input_handler)
+            elif event == select.POLLIN:
+                self._read_event(fd)
+            elif event == select.POLLOUT:
+                self._write_event(fd)
+            else:
+                self._error_event(fd)
 
 
     def broadcast(self, msg):
