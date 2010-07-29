@@ -32,45 +32,45 @@ by underscores. Example: user_name
 ** File and module structure
 ** Code architecture
 *** Overview
-The driver code is divided into several parts.
-
-**** Functionality brainstorm
-| Functionality    | Main | Driver | Separate |
-|------------------+------+--------+----------|
-| Startup          | X    |        |          |
-| Network          |      | X?     |          |
-| Data storage     |      |        | X        |
-| Command handling |      | X      |          |
-| Combat           |      | X      |          |
-| NPC AI           |      |        | X        |
-| Plant handling   |      |        | X        |
-| Weather          |      |        | X        |
-
-**** Things that need handling
-- Errors
-- Threads
-  - Information passing & locks
-- Logging
-- Components
-  - Information passing
-
-**** Code components
-***** Startup
-***** Network
-***** Data storage
+*** Code components
+**** Startup
+**** Network
+**** Data storage
 All objects that need to store data on secondary storage use a
 dictionary for that data. DM implements the ability to save and load
 this dictionary.
 
-***** Command handling
-***** Combat
-***** NPC AI
-***** Game daemons
-****** Plant handling
-****** Weather
+**** Command handling
+**** Combat
+**** NPC AI
+**** Game daemons
+***** Plant handling
+***** Weather
+*** The main loop
+**** Terminology
+| Term       | Description                                      |
+|------------+--------------------------------------------------|
+| Tick       | Each iteration of the main loop is called a tick |
+| Heart beat | Function called in objects each tick             | 
+  
+**** Variables
+| Variable        | Description                                    |
+|-----------------+------------------------------------------------|
+| tick_len        | How long between each tick (2000 milisec)      |
+| num_heart_beats | Number of objects with registered heart_beats  |
+| tick_start_time | The time when this tick started                |
+| tick_end_time   | The time when this tick is supposed to be done |
 
-** Logging
-** Code structure
+**** Pseudocode
+- Every tick (tick length = tick_len):
+  - Store current_time() in tick_start_time
+  - Set tick_end_time = tick_start_time + tick_len
+  - Until all object ticks are handled:
+    - While network traffic in queue:
+      - Hande one traffic event
+    - Handle 10 object heart beats
+  - While current_time() is less than tick_end_time():
+    - Wait for network traffic (timeout = tick_end_time - current_time())
 *** Game objects
 Game objects are objects that appear in the game, such as room,
 weapons, characters, monsters, clothes, and so on.

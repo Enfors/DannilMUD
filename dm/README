@@ -3,6 +3,8 @@
 
 Subdirectories, and their purpose:
 
-  * cmds   - MUD commands.
-  * objs   - MUD objects.
-  * std    - System components such as networking, user management, etc.
+  * cmd    - MUD commands.
+  * obj    - MUD objects.
+  * sys    - System components such as networking, user management, etc.
+  * user   - Saved user files.
+  * attic  - Obsolete files are sometimes moved here.

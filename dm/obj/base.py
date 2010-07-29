@@ -19,19 +19,23 @@ class Base:
 
     def set(self, prop, value):
         """Set the property prop to the specified value."""
-        self.props[prop] = value
+        func_name = "set_%s" % prop
+
+        if func_name in dir(self):
+            eval("self.%s(value)" % func_name)
+        else:
+            self.props[prop] = value
 
 
     def query(self, prop):
         """Return the value of the specified prop."""
-        value = self.props[prop]
-        return value
+        func_name = "query_%s" % prop
+
+        if func_name in dir(self):
+            return eval("self.%s()" % func_name)
+        else:
+            return self.props[prop]
 
 
 if __name__ == "__main__":
     obj = Base()
-    obj.set("Foo", "bar")
-    print(obj.query("Foo"))
-    print(obj.query("short"))
-    print(obj.query("long"))
-
