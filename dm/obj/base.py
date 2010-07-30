@@ -20,10 +20,15 @@ class Base:
     def __repr__(self):
         val = self.query("short")
 
-        if self.query("light_source"):
-            val += " (light source)"
+        prop_disp = ""
+
+        for key in self.props.keys():
+            prop_disp += "  +-%-20s: %s\n" % (key, str(self.props[key]))
+
+        if len(prop_disp):
+            val += "\n  | Properties:\n" + prop_disp
         else:
-            val += " (not a light source)"
+            val += "  | No properties."
         
         return val
             
@@ -53,3 +58,4 @@ class Base:
 
 if __name__ == "__main__":
     obj = Base()
+    print(obj)
