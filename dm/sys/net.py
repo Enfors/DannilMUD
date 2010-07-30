@@ -240,6 +240,7 @@ class ConMan:
         for con in self.cons.values():
             con.write(msg)
 
+
     def register_for_poll(self, con, mask):
         #print "  now entering register_for_poll()"
         self.poller.register(con.query_fd(), mask | self.std_mask)

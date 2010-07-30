@@ -15,6 +15,15 @@ class Base:
             "It has no distinguishable features at all. " \
             "It is, in fact, so utterly plain and uninteresting " \
             "that you can't even tell what it is. And nobody cares.")
+
+
+    def __repr__(self):
+        val = self.query("short")
+
+        if self.query("light_source"):
+            val += " (light source)"
+        
+        return val
             
 
     def set(self, prop, value):
@@ -31,10 +40,11 @@ class Base:
         """Return the value of the specified prop."""
         func_name = "query_%s" % prop
 
-        if func_name in dir(self):
-            return eval("self.%s()" % func_name)
-        else:
-            return self.props[prop]
+        try:
+            if func_name in dir(self):
+                return eval("self.%s()" % func_name)
+            else:
+                return self.props[prop]
 
 
 if __name__ == "__main__":

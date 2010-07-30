@@ -97,16 +97,77 @@ attribute in the "room" class.
 Likewise, a humanoid druid could conceivably transform himself into a
 bear. Therefore, "humanoid" should not be a class in the GOCT.
 
+- Base
+  - Container
+    - Living
+    - Room
+  - Equipment
+    - Weapon
+      - Melee_weapon
+      - Ranged_weapon
+  - Wearable
+    - Armour
+    - Clothing
+
 ***** Base
-****** Room
-****** Living
+| Prop   | Description                             |
+|--------+-----------------------------------------|
+| bulk   | How bulky the object is                 |
+| weight | How much it weighs (100 = 1 kg)         |
+| short  | Short description, shown in environment |
+| long   | Long description, shown when examined   | 
+  
+****** Container
+| Prop       | Description                         |
+|------------+-------------------------------------|
+| bulk_cap   | How much bulk fits in the container |
+| weight_cap | How much weight can it handle       |
+  
+******* Room
+| Prop  | Description                                          |
+|-------+------------------------------------------------------|
+| exits | Dict of directions, pointing to destination rooms    |
+| light | How light or dark it is. 10 = daylight, 0 = no light |
+
+******* Living
+| Prop | Description |
+|------+-------------|
+|      |             | 
+  
 ****** Equipment
+| Prop | Description |
+|------+-------------|
+|      |             | 
+  
 ******* Wearable
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ******** Armour
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ******** Clothing
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ******* Weapon
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ******** Ranged_weapon
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ******** Melee_weapon
+| Prop | Description |
+|------+-------------|
+|      |             | 
 
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and
