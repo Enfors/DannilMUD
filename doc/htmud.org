@@ -9,6 +9,8 @@ separated with an underscore.
 All filenames (except README-files and the like) should consist of all
 lowercase letters (as well as underscores and such as necessary).
 
+Module file names start with "m_", followed by the module name.
+
 *** Classes
 Class names consist of a series of one or more words, where the first
 letter of each word is capitalized. The rest of the letters are
@@ -75,9 +77,9 @@ this dictionary.
 Game objects are objects that appear in the game, such as room,
 weapons, characters, monsters, clothes, and so on.
 
-**** Attributes
-All game objects have a set of attributes, stored in a
-dictionary. Each attribute has a name (key) and a value.
+**** Properties
+All game objects have a set of properties, called props, stored in a
+dictionary. Each prop has a name (key) and a value.
 
 **** The game object class tree
 All game objects are objects of a class that inherits from a class in
@@ -97,19 +99,8 @@ attribute in the "room" class.
 Likewise, a humanoid druid could conceivably transform himself into a
 bear. Therefore, "humanoid" should not be a class in the GOCT.
 
-- Base
-  - Container
-    - Living
-    - Room
-  - Equipment
-    - Weapon
-      - Melee_weapon
-      - Ranged_weapon
-  - Wearable
-    - Armour
-    - Clothing
-
 ***** Base
+
 | Prop   | Description                             |
 |--------+-----------------------------------------|
 | bulk   | How bulky the object is                 |
@@ -168,6 +159,24 @@ bear. Therefore, "humanoid" should not be a class in the GOCT.
 | Prop | Description |
 |------+-------------|
 |      |             | 
+
+***** Modules
+Modules are files containing classes used to modify the nature of
+an object. They are meant to be used with multiple inheritance, where
+the first inheritance is the "proper" parent, and the module classes
+are the consequtive parents.
+
+For example, "sword" is a "proper" parent. So is "torch". The torch
+uses the m_light_source module to provide the light. So, Torch uses
+the Equipment class as its proper (first) parent, and LightSource as
+its second parent.
+
+Why can't Torch use LightSource as its proper (first) parent? Well, we
+might want to have a magical sword at some point, which aside from
+being a weapon is also a light source. So, this sword must have Sword
+as its "proper" (first) parent - it can't have LightSource, or it
+wouldn't be a sword. Therefore, LightSource is used as a module, being
+inherited from as the second parent.
 
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and

@@ -22,6 +22,8 @@ class Base:
 
         if self.query("light_source"):
             val += " (light source)"
+        else:
+            val += " (not a light source)"
         
         return val
             
@@ -45,6 +47,8 @@ class Base:
                 return eval("self.%s()" % func_name)
             else:
                 return self.props[prop]
+        except KeyError:
+            return None
 
 
 if __name__ == "__main__":
