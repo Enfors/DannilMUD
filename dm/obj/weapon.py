@@ -10,6 +10,8 @@ class Weapon(equipment.Equipment, m_light_source.LightSource):
 
         self.set("short", "Weapon")
         self.set("long",  "A non-descript weapon.")
+        self.set("weight", 400)
+        self.set("bulk",   400)
 
 
 if __name__ == "__main__":

@@ -81,6 +81,24 @@ weapons, characters, monsters, clothes, and so on.
 All game objects have a set of properties, called props, stored in a
 dictionary. Each prop has a name (key) and a value.
 
+***** Weight
+Weight is measured in units of 10 grams. So, one kilogram is 100.
+
+***** Bulk
+Bulk measures how "bulky" an object is, as in how much empty space
+it needs in a bag in order to fit.
+
+| Bulk | Example object         |
+|------+------------------------|
+|    1 | Acorn                  |
+|    5 | Golf ball-sized stone  |
+|   20 | Fist-sized stone       |
+|   50 | Helmet                 |
+|   80 | Short sword            |
+|  100 | Short bow              |
+|  120 | Long sword             |
+|  140 | Long bow, breast plate |
+
 **** The game object class tree
 All game objects are objects of a class that inherits from a class in
 the game object class tree (the GOCT, for short). The root of the GOCT
