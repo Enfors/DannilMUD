@@ -7,6 +7,7 @@
 
 class Base:
     """The basic game object, which all other objects inherit."""
+
     def __init__(self):
         self.props = { }
         self.set("short", "ordinary-looking object")
@@ -16,22 +17,9 @@ class Base:
             "It is, in fact, so utterly plain and uninteresting " \
             "that you can't even tell what it is. And nobody cares.")
 
+        # Env = environment = which room the object is in.
+        self.env = None
 
-    def __repr__(self):
-        val = self.query("short")
-
-        prop_disp = ""
-
-        for key in self.props.keys():
-            prop_disp += "  +-%-20s: %s\n" % (key, str(self.props[key]))
-
-        if len(prop_disp):
-            val += "\n  | Properties:\n" + prop_disp
-        else:
-            val += "  | No properties."
-        
-        return val
-            
 
     def set(self, prop, value):
         """Set the property prop to the specified value."""
@@ -55,6 +43,49 @@ class Base:
         except KeyError:
             return None
 
+
+    def move_to_env(self, target_env):
+        """Move the specified object to the specified environment.
+
+can_add_contents() is called on the target environment first, to
+make sure that it can accept the object being moved.
+
+RETURNS:
+  True  : If the move was successful
+  False : If the move failed
+"""
+        if target_env.can_add_contents(self):
+            if target_env.add_contents(self):
+                self.env = target_env
+                return True
+
+        return False
+
+
+    def __repr__(self):
+        val = self.query("short") + "\n"
+
+        room = self.env
+
+        if room:
+            room = room.query("short")
+        else:
+            room = "None"
+
+        val += "  | Environment: %s\n" % room
+
+        prop_disp = ""
+
+        for key in self.props.keys():
+            prop_disp += "  +-%-20s: %s\n" % (key, str(self.props[key]))
+
+        if len(prop_disp):
+            val += "  | Properties:\n" + prop_disp
+        else:
+            val += "  | No properties.\n"
+        
+        return val
+            
 
 if __name__ == "__main__":
     obj = Base()
