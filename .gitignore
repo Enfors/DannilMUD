@@ -1,4 +1,5 @@
 dm/user
 dm/*.pyc
+dm/daemon/*.pyc
 dm/obj/*.pyc
 dm/sys/*.pyc
