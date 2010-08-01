@@ -6,12 +6,15 @@
 
 import sys
 
+import dm.daemon.update_d as update_d
+
 class DannilMUD:
     def __init__(self):
         pass
 
 
     def boot(self):
+
         print("")
         print("  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
         print("  |                                                         |")
@@ -24,9 +27,10 @@ class DannilMUD:
             print("Commencing boot sequence.")
 
             print("    Importing modules...             ", end = " ")
-            import dm.sys.net       as net
-            import dm.sys.login     as login
-            import dm.sys.user_man  as user_man
+            import dm.daemon.update_d as update_d
+            import dm.sys.net         as net
+            import dm.sys.login       as login
+            import dm.sys.user_man    as user_man
             print("done.")
 
             print("    Initializing user manager...     ", end = " ")

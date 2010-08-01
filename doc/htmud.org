@@ -206,6 +206,44 @@ as its "proper" (first) parent - it can't have LightSource, or it
 wouldn't be a sword. Therefore, LightSource is used as a module, being
 inherited from as the second parent.
 
+*** Events
+Messages (plain text) needs to be transmitted between different game
+objects to report in-game occurances. These occurances are called
+events.
+
+*** Daemons
+**** The update daemon
+The update daemon's sole purpose in life is to make it possible to
+update code while the game is running. Each time the driver needs an
+(updatable) object - such as the command parser, for example - it
+asks the update daemon for it. So, to update the command parser after
+having changed the code, we ask the update daemon to reload it. Then,
+the next time the driver asks the update daemon for the command parser,
+the update daemon hands over the newest version of it.
+
+***** A day in the life of the update daemon
+1. Be initialized by the driver.
+2. Wait for requests:
+   1. If a request for an object arrives:
+      1. If the object is not available in the cache, load it, cache
+         it and return it.
+      2. If the object is available in the cache, return it.
+   2. If an update request arrives, reload the specified code
+      and store a pointer to it in a cache.
+
+**** The command parser
+When the command parser initializes, it imports all commands in each
+command directory except files named "base", and instantiates the Cmd
+class in each of them.
+
+There are different directories where commands reside.
+
+| Directory   | Description                        |
+|-------------+------------------------------------|
+| cmds/player | Commands available to all users    |
+| cmds/wiz    | Commands available only to wizards |
+| cmds/admin  | Commands available only to admins  | 
+  
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and
 "mudlib". The advantage of the division would be that it would be

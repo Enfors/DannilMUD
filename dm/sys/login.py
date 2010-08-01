@@ -2,6 +2,8 @@
 
 import os
 
+import dm.daemon.update_d as update_d
+
 class Parser:
 
     def __init__(self, user_man, cmds_dir):
@@ -90,7 +92,10 @@ Returns (cmd, (arg_list))."""
     def login_state_idle(self, con, text):
         (cmd, args) = self.parse_cmd(text)
         
-        print("Cmd: %s" % cmd)
+        cmd_parser = update_d.update_d.request_obj("sys.cmd_parser",
+                                                   "CmdParser")
+        cmd_parser.parse(text)
+        
         con.write("> ")
 
         
