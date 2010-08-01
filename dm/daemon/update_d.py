@@ -9,6 +9,10 @@ class UpdateD(daemon.Daemon):
 
 
     def request_obj(self, module_path, class_name):
+        # Remove trailing .py, if present
+        if module_path[-3:] == ".py":
+            module_path = module_path[:-3]
+
         if not module_path in self.modules:
             # todo: handle exceptions here
 
