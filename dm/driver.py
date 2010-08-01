@@ -24,13 +24,13 @@ class DannilMUD:
             print("Commencing boot sequence.")
 
             print("    Importing modules...             ", end = " ")
-            import dm.sys.net   as net
-            import dm.sys.login as login
-            import dm.sys.user  as user
+            import dm.sys.net       as net
+            import dm.sys.login     as login
+            import dm.sys.user_man  as user_man
             print("done.")
 
             print("    Initializing user manager...     ", end = " ")
-            self.user_man = user.UserMan()
+            self.user_man = user_man.UserMan()
             print("done.")
 
             print("    Initializing parser...           ", end = " ")

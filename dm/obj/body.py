@@ -1,8 +1,8 @@
-# living.py by Dannil
+# body.py by Dannil
 
-import dm.obj.obj as obj
+import dm.obj.container as container
 
-class Living(obj.Obj):
+class Body(container.Container):
     def __init__(self):
         set_name("unnamed")
 

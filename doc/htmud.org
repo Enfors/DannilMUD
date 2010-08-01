@@ -138,11 +138,21 @@ bear. Therefore, "humanoid" should not be a class in the GOCT.
 | exits | Dict of directions, pointing to destination rooms    |
 | light | How light or dark it is. 10 = daylight, 0 = no light |
 
-******* Living
+******* Body
 | Prop | Description |
 |------+-------------|
 |      |             | 
-  
+
+******** User char
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
+******** NPC
+| Prop | Description |
+|------+-------------|
+|      |             | 
+
 ****** Equipment
 | Prop | Description |
 |------+-------------|
