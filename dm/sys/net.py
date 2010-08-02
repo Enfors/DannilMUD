@@ -32,6 +32,8 @@ class Con:
         self.remote_ip   = ip               # Remote end IP
         self.remote_port = port             # Remote end port number
 
+        self.user_char   = None             # The user char for this con
+
     #
     # Public functions
     #
@@ -79,6 +81,13 @@ class Con:
         self.sock.shutdown(socket.SHUT_RDWR)
         self.sock.close()
 
+
+    def set_user_char(self, user_char):
+        self.user_char = user_char
+
+
+    def query_user_char(self):
+        return self.user_char
 
 
     #
@@ -205,7 +214,9 @@ class ConMan:
     #
 
     def main_loop(self, input_handler):
-        """Listens to the listen_socket, and handles connections."""
+        """Listens to the listen_socket, and handles connections.
+        This function is obsolete. The main loop now resides in the
+        driver."""
         #self.listen_sock.listen(5)
         #print("[net] Server accepting connections on port %d." % \
         #          self.listen_port)
@@ -251,10 +262,17 @@ class ConMan:
     
             
     def end_con(self, con):
-        print("[net] Closing connection on fd %d from %s:%d." % \
-            (con.sock.fileno(), con.remote_ip, con.remote_port))
+        #print("[net] Closing connection on fd %d from %s:%d." % \
+        #    (con.sock.fileno(), con.remote_ip, con.remote_port))
+        print("[net] %s logged out from %s:%d." % \
+            (con.user_char.query_cap_name(),
+             con.remote_ip, con.remote_port))
         del self.socks[con.query_fd()]
         del self.cons[con.query_fd()]
+
+        # Tell the user char that the connection has been closed.
+        if con.user_char:
+            con.user_char.con_closed()
 
     
     #

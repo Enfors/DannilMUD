@@ -9,5 +9,6 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("quit")
 
 
-    def rule_quit(self):
-        print("Quit called")
+    def rule_quit(self, user):
+        user.close_con()
+        

@@ -9,11 +9,20 @@ class UserMan:
         self.users = {}
 
 
-    def init_user(self, name):
-        user = user_char.UserChar(name)
+    def init_user(self, con):
+        name = con.login
+        user = user_char.UserChar(con)
         user = user.load()
         self.users[name] = user
         return user
+
+
+    def end_user(self, user_char):
+        del self.users[user_char.query_name()]
+
+
+    def query_users(self):
+        return self.users
 
 
     def query_user_exists(self, name):

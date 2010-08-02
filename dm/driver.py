@@ -30,11 +30,11 @@ class DannilMUD:
             import dm.daemon.update_d as update_d
             import dm.sys.net         as net
             import dm.sys.login       as login
-            import dm.sys.user_man    as user_man
             print("done.")
 
             print("    Initializing user manager...     ", end = " ")
-            self.user_man = user_man.UserMan()
+            self.user_man = update_d.update_d.request_obj("sys.user_man",
+                                                          "UserMan")
             print("done.")
 
             print("    Initializing parser...           ", end = " ")

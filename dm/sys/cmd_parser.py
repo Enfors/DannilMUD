@@ -17,7 +17,7 @@ class CmdParser:
         self.load_all_cmds()
 
     
-    def parse(self, input):
+    def parse(self, input, user):
         cmd_string = input.split(" ")[0]
         print("Cmd: " + cmd_string)
         
@@ -28,7 +28,7 @@ class CmdParser:
 
         if input in cmd.rules:
             print("Matching rule found.")
-            eval("cmd.rule_%s()" % input)
+            eval("cmd.rule_%s(user)" % input)
         else:
             print("No matching rule.")
 

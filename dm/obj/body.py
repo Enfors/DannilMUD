@@ -4,7 +4,8 @@ import dm.obj.container as container
 
 class Body(container.Container):
     def __init__(self):
-        set_name("unnamed")
+        container.Container.__init__(self)
+        self.set_name("unnamed")
 
 
     def set_name(self, name):

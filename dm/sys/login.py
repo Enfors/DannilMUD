@@ -75,9 +75,9 @@ Returns (cmd, (arg_list))."""
 
     def login_state_awaiting_passwd(self, con, text):
         entered_passwd = text
-        user = self.user_man.init_user(con.login)
+        user = self.user_man.init_user(con)
 
-        if user.query_passwd() != text.strip():
+        if user.query("passwd") != text.strip():
             con.num_failed_logins += 1;
             con.write("Login incorrect. Please try again.\n\nLogin: ")
             con.login_state = "awaiting_login"
@@ -94,7 +94,7 @@ Returns (cmd, (arg_list))."""
         
         cmd_parser = update_d.update_d.request_obj("sys.cmd_parser",
                                                    "CmdParser")
-        cmd_parser.parse(text)
+        cmd_parser.parse(text, con.query_user_char())
         
         con.write("> ")
 
@@ -126,8 +126,8 @@ Returns (cmd, (arg_list))."""
                       "Password: ")
             con.login_state = "create_passwd"
         else:
-            user = self.user_man.init_user(con.login)
-            user.set_passwd(text)
+            user = self.user_man.init_user(con)
+            user.set("passwd", text)
             user.save()
             con.write("The passwords match. Thank you!\n> ")
             con.login_state = "idle"
