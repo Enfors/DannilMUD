@@ -62,6 +62,23 @@ RETURNS:
         return False
 
 
+    def set_env(self, env):
+        """Puts the object in the specified environment (room, bag, ...)"""
+        self.env = env
+
+
+    def query_env(self):
+        """Return the object's environment (room, bag, ...)."""
+        return self.env
+
+
+    def recv_text(self, text):
+        """Send a message to this object.
+        
+        This function should probably be overridden."""
+        pass
+
+
     def __repr__(self):
         val = self.query("short") + "\n"
 

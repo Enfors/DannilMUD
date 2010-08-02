@@ -52,6 +52,11 @@ class Room(container.Container):
                                  both_ways = False)
 
 
+    def recv_text(self, text):
+        """Receive text, and broadcast to everyone here."""
+        for obj in self.contents:
+            obj.recv_text(text)
+
     
     def __repr__(self):
         disp = self.query("short") + "\n"

@@ -52,6 +52,11 @@ Returns (cmd, (arg_list))."""
     def login_state_awaiting_login(self, con, text):
         con.login = text.lower()
 
+        if self.user_man.query_user_online(con.login):
+            con.write("You are already online. Go away.\n")
+            con.end_after_write()
+            return
+
         if len(text) < 2:
             con.num_failed_logins += 1
         elif os.path.exists("user/%s" % con.login):
@@ -75,6 +80,7 @@ Returns (cmd, (arg_list))."""
 
     def login_state_awaiting_passwd(self, con, text):
         entered_passwd = text
+
         user = self.user_man.init_user(con)
 
         if user.query("passwd") != text.strip():
@@ -126,7 +132,7 @@ Returns (cmd, (arg_list))."""
                       "Password: ")
             con.login_state = "create_passwd"
         else:
-            user = self.user_man.init_user(con)
+            user = self.user_man.init_user(con, new_user = True)
             user.set("passwd", text)
             user.save()
             con.write("The passwords match. Thank you!\n> ")

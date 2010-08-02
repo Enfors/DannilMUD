@@ -264,9 +264,10 @@ class ConMan:
     def end_con(self, con):
         #print("[net] Closing connection on fd %d from %s:%d." % \
         #    (con.sock.fileno(), con.remote_ip, con.remote_port))
-        print("[net] %s logged out from %s:%d." % \
-            (con.user_char.query_cap_name(),
-             con.remote_ip, con.remote_port))
+        if con.user_char:
+            print("[net] %s logged out from %s:%d." % \
+                      (con.user_char.query_cap_name(),
+                       con.remote_ip, con.remote_port))
         del self.socks[con.query_fd()]
         del self.cons[con.query_fd()]
 

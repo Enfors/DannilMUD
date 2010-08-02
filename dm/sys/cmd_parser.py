@@ -18,19 +18,28 @@ class CmdParser:
 
     
     def parse(self, input, user):
-        cmd_string = input.split(" ")[0]
-        print("Cmd: " + cmd_string)
-        
+        words = input.split(" ")
+        cmd_string = words[0]
+
         if cmd_string in self.player_cmds:
             cmd = self.player_cmds[cmd_string]
         else:
+            user.recv_text("What?\n")
             return
 
+        if len(words) > 1:
+            rule = "%s STR" % cmd_string
+            if rule in cmd.rules:
+                str = " ".join(words[1:]).replace("'", "\\'")
+                eval("cmd.rule_%s(user, '%s')" % (rule.replace(" ", "_"),
+                                                  str))
+                return
+
         if input in cmd.rules:
-            print("Matching rule found.")
             eval("cmd.rule_%s(user)" % input)
+            return
         else:
-            print("No matching rule.")
+            user.recv_text("What?\n")
 
 
     def load_all_cmds(self):
@@ -61,7 +70,6 @@ class CmdParser:
 
             cmd = update_d.update_d.request_obj("%s.%s" % (dir, file_name),
                                                 "Cmd")
-            print(cmd)
             cmd_dict[file_name] = cmd
 
         return cmd_dict

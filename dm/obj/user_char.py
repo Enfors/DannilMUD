@@ -19,6 +19,10 @@ class UserChar(body.Body):
     def query_name(self):
         return self.name
 
+
+    def recv_text(self, text):
+        self.con.write(text)
+
     
     def set_con(self, con):
         self.con = con

@@ -25,6 +25,7 @@ contains the living's inventory)."""
             return False
         else:
             self.contents.append(obj)
+            obj.set_env(self)
             return True
 
 
@@ -50,6 +51,10 @@ Otherwise, False is returned. Both weight and bulk is checked."""
             return False
 
         return True
+
+
+    def query_contents(self):
+        return self.contents
 
 
     def query_held_weight(self):

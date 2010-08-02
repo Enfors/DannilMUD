@@ -7,6 +7,7 @@
 import sys
 
 import dm.daemon.update_d as update_d
+import dm.obj.room        as room
 
 class DannilMUD:
     def __init__(self):
