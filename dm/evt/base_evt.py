@@ -9,6 +9,8 @@ class Evt:
         self.doer      = None
         self.target    = None
         self.text      = ( )
+        self.indent1   = 0      # Indentation for first line
+        self.indent2   = 0      # Indentation for consequtive lines
         self.text_d    = update_d.update_d.request_obj("daemon.text_d",
                                                        "TextD")
 
@@ -77,7 +79,6 @@ class Evt:
                 part = word[:dollar_pos] + \
                     self._handle_var(word[dollar_pos + 1:], observer_num)
 
-                #text.append(self._handle_var(word[1:], observer_num))
                 text.append(part)
             else:
                 text.append(word)
@@ -154,7 +155,8 @@ class Evt:
     def _notify_recipient(self, recipient):
         text = self.query_observer_text(recipient)
 
-        recipient.recv_tag_text(text + "\n")
+        recipient.recv_tag_text(text + "\n", indent1 = self.indent1,
+                                indent2 = self.indent2)
 
 
     def _query_operator_rooms(self):

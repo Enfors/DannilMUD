@@ -76,8 +76,11 @@ affected."""
         return words
             
 
-    def convert_tag_text(self, text, body = None, prefs = None):
-        disp = ""
+    def convert_tag_text(self, text, body = None, prefs = None, width = 0,
+                         indent1 = 0, indent2 = 0):
+        disp = "" + " " * indent1
+        line_len = indent1
+        space_needed = False
 
         color_d = update_d.update_d.request_obj("daemon.color_d",
                                                 "ColorD")
@@ -88,7 +91,21 @@ affected."""
             if kind == "tag":
                 disp += color_d.query_tag_code(part)
             else:
-                disp += part
+                parts = part.strip(" ").split(" ")
+
+                for part in parts:
+                    if width and line_len + len(part) > width:
+                        disp += "\n" + " " * indent2
+                        space_needed = False
+                        line_len = indent2
+
+                    if space_needed:
+                        disp += " "
+                        line_len += 1
+
+                    disp += part
+                    space_needed = True
+                    line_len += len(part)
 
             kind, part, text = self._get_token(text)
 

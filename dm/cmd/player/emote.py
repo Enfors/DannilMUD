@@ -18,6 +18,7 @@ class Cmd(player_cmd.PlayerCmd):
     def rule_emote_STR(self, user, str):
         emote_event = emote_evt.EmoteEvt()
         emote_event.set_operators([user])
-        emote_event.set_text("%s %s" % (user.query_cap_name(), str))
+        emote_event.set_text("<emote>%s %s</>" % 
+                             (user.query_cap_name(), str))
         emote_event.activate()
 
