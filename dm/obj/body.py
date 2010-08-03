@@ -1,6 +1,7 @@
 # body.py by Dannil
 
-import dm.obj.container as container
+import dm.obj.container   as container
+import dm.daemon.update_d as update_d
 
 class Body(container.Container):
     def __init__(self):
@@ -18,3 +19,12 @@ class Body(container.Container):
 
     def query_cap_name(self):
         return self.name.capitalize()
+
+
+    def recv_tag_text(self, text):
+        text_d = update_d.update_d.request_obj("daemon.text_d",
+                                               "TextD")
+
+        text = text_d.convert_tag_text(text, self)
+        return self.recv_text(text)
+

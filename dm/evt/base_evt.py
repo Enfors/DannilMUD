@@ -1,5 +1,7 @@
 # base_event.py by Dannil
 
+import dm.daemon.update_d as update_d
+
 class Evt:
     def __init__(self):
         self.broadcast = True
@@ -7,6 +9,8 @@ class Evt:
         self.doer      = None
         self.target    = None
         self.text      = ( )
+        self.text_d    = update_d.update_d.request_obj("daemon.text_d",
+                                                       "TextD")
 
     def set_broadcast(self, bool):
         """Set the broadcast bool to True or False.
@@ -50,6 +54,7 @@ class Evt:
 
 
     def set_text(self, text):
+        #self.text = self.text_d.split_with_tags(text)
         self.text = text.split(" ")
 
 
@@ -66,8 +71,14 @@ class Evt:
             observer_num = -1
 
         for word in self.text:
-            if word[0] == "$":
-                text.append(self._handle_var(word[1:], observer_num))
+            dollar_pos = word.find("$")
+
+            if dollar_pos != -1:
+                part = word[:dollar_pos] + \
+                    self._handle_var(word[dollar_pos + 1:], observer_num)
+
+                #text.append(self._handle_var(word[1:], observer_num))
+                text.append(part)
             else:
                 text.append(word)
 
@@ -105,6 +116,14 @@ class Evt:
         if observer_num == operator_num:
             return verb
         else:
+#            pos = verb.find("<")
+
+#            if pos != -1:
+#                return verb[:pos] + "s" + verb[pos:]
+            for i in range(0, len(verb)):
+                if not verb[i].isalpha():
+                    return verb[:i] + "s" + verb[i:]
+            
             return verb + "s"
     
 
@@ -135,8 +154,7 @@ class Evt:
     def _notify_recipient(self, recipient):
         text = self.query_observer_text(recipient)
 
-        # todo: replace recv_text() with higher level function
-        recipient.recv_text(text + "\n")
+        recipient.recv_tag_text(text + "\n")
 
 
     def _query_operator_rooms(self):

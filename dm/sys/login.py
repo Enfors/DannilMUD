@@ -96,7 +96,8 @@ Returns (cmd, (arg_list))."""
 
 
     def login_state_idle(self, con, text):
-        (cmd, args) = self.parse_cmd(text)
+        if len(text) == 0:
+            return
         
         cmd_parser = update_d.update_d.request_obj("sys.cmd_parser",
                                                    "CmdParser")

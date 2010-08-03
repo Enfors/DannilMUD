@@ -15,9 +15,10 @@ class Cmd(player_cmd.PlayerCmd):
         if not room:
             user.recv_text("You're.... nowhere. How'd that happen?\n")
 
-        disp = "%s\n%s\n" % (room.query("short"), room.query("long"))
+        disp = "<room_short>%s</>\n<room_long>%s</>\n" % \
+            (room.query("short"), room.query("long"))
 
-        disp += "Obvious exits: "
+        disp += "\n  <room_exits>Obvious exits: "
 
         exits = room.query("exits")
 
@@ -26,7 +27,7 @@ class Cmd(player_cmd.PlayerCmd):
         else:
             disp += "none"
 
-        disp += "\n"
+        disp += "</>\n"
 
         contents = room.query_contents()
 
@@ -37,4 +38,4 @@ class Cmd(player_cmd.PlayerCmd):
             else:
                 disp += obj.query("short") + "\n"
 
-        user.recv_text(disp)
+        user.recv_tag_text(disp)

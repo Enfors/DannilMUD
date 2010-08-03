@@ -2,10 +2,11 @@
 
 import imp, sys
 
-import dm.daemon.daemon as daemon
+import dm.daemon.base_daemon as base_daemon
 
-class UpdateD(daemon.Daemon):
+class UpdateD(base_daemon.Daemon):
     def __init__(self):
+        base_daemon.Daemon.__init__(self)
         self.modules = { }
         self.objects = { }
 

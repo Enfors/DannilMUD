@@ -82,6 +82,10 @@ RETURNS:
         pass
 
 
+    def recv_tag_text(self, text):
+        pass
+
+
     def __repr__(self):
         val = self.query("short") + "\n"
 
