@@ -1,6 +1,7 @@
 # say.py by Dannil
 
 import dm.cmd.player.player_cmd as player_cmd
+import dm.evt.say_evt           as say_evt
 
 class Cmd(player_cmd.PlayerCmd):
     def __init__(self):
@@ -21,4 +22,10 @@ class Cmd(player_cmd.PlayerCmd):
             user.recv_text("There is noone here to talk to.\n")
             return False
 
-        env.recv_text("%s says: %s\n" % (user.query_cap_name(), str))
+        #env.recv_text("%s says: %s\n" % (user.query_cap_name(), str))
+        
+        say_event = say_evt.SayEvt()
+        say_event.set_operators([user])
+        say_event.set_text("$N0 $v0say '%s'" % str)
+        say_event.activate()
+

@@ -4,6 +4,7 @@ dm/cmd/*.pyc
 dm/cmd/player/*.pyc
 dm/cmd/wiz/*.pyc
 dm/cmd/admin/*.pyc
+dm/evt/*.pyc
 dm/daemon/*.pyc
 dm/obj/*.pyc
 dm/sys/*.pyc

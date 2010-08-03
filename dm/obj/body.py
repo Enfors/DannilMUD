@@ -15,3 +15,6 @@ class Body(container.Container):
     def query_name(self):
         return self.name
         
+
+    def query_cap_name(self):
+        return self.name.capitalize()

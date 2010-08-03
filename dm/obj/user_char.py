@@ -46,10 +46,6 @@ class UserChar(body.Body):
         user_man.end_user(self)
 
 
-    def query_cap_name(self):
-        return self.query_name().capitalize()
-
-
     def save(self):
         if not len(self.name):
             raise SaveErrorNoName
