@@ -19,12 +19,12 @@ class Room(container.Container):
 
         self.set("object_type", "room")
 
-        if short:
-            self.set("short", short)
-        else:
-            self.set("short", "A non-descript room")
+        #if short:
+        #    self.set("short", short)
+        #else:
+        #    self.set("short", "A non-descript room")
 
-        self.set("long",  "A very non-descript, generic-looking room.")
+        #self.set("long",  "A very non-descript, generic-looking room.")
 
         # Can accept any amount of bulk
         self.set("bulk_cap",   0)

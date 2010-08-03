@@ -111,6 +111,7 @@ affected."""
                     disp += part
                     if part[-1:] == "\n":
                         space_needed = False
+                        line_len = indent2
                     else:
                         space_needed = True
 

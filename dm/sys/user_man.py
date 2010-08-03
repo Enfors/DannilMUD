@@ -22,8 +22,9 @@ class UserMan:
 
         self.users[name] = user
         
-        lobby = update_d.update_d.request_obj("sys.lobby", "Lobby")
-        user.move_to_env(lobby)
+        street = update_d.update_d.request_obj("world.ooc.room.street1",
+                                               "Room")
+        user.move_to_env(street)
 
         return user
 

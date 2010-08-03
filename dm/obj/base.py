@@ -20,6 +20,12 @@ class Base:
         # Env = environment = which room the object is in.
         self.env = None
 
+        self.setup()
+
+
+    def setup(self):
+        pass
+
 
     def set(self, prop, value):
         """Set the property prop to the specified value."""
