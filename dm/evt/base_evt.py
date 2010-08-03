@@ -4,15 +4,16 @@ import dm.daemon.update_d as update_d
 
 class Evt:
     def __init__(self):
-        self.broadcast = True
-        self.operators = ( )
-        self.doer      = None
-        self.target    = None
-        self.text      = ( )
-        self.indent1   = 0      # Indentation for first line
-        self.indent2   = 0      # Indentation for consequtive lines
-        self.text_d    = update_d.update_d.request_obj("daemon.text_d",
-                                                       "TextD")
+        self.broadcast  = True
+        self.operators  = ( )
+        self.doer       = None
+        self.target     = None
+        self.text       = ( )
+        self.indent1    = 0      # Indentation for first line
+        self.indent2    = 0      # Indentation for consequtive lines
+        self.leading_nl = False
+        self.text_d     = update_d.update_d.request_obj("daemon.text_d",
+                                                        "TextD")
 
     def set_broadcast(self, bool):
         """Set the broadcast bool to True or False.
@@ -62,6 +63,14 @@ class Evt:
 
     def query_text(self):
         return " ".join(self.text)
+
+
+    def set_leading_nl(self, bool):
+        self.leading_nl = bool
+
+
+    def query_leading_nl(self):
+        return self.leading_nl
 
 
     def query_observer_text(self, observer):
@@ -155,8 +164,10 @@ class Evt:
     def _notify_recipient(self, recipient):
         text = self.query_observer_text(recipient)
 
-        recipient.recv_tag_text(text + "\n", indent1 = self.indent1,
-                                indent2 = self.indent2)
+        recipient.recv_tag_text(text,
+                                indent1    = self.indent1,
+                                indent2    = self.indent2,
+                                leading_nl = self.leading_nl)
 
 
     def _query_operator_rooms(self):

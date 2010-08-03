@@ -21,11 +21,12 @@ class Body(container.Container):
         return self.name.capitalize()
 
 
-    def recv_tag_text(self, text, indent1 = 0, indent2 = 0):
+    def recv_tag_text(self, text, indent1 = 0, indent2 = 0,
+                      leading_nl = False):
         text_d = update_d.update_d.request_obj("daemon.text_d",
                                                "TextD")
 
         text = text_d.convert_tag_text(text, self, None, 76, 
-                                       indent1, indent2)
+                                       indent1, indent2, leading_nl)
         return self.recv_text(text + "\n")
 

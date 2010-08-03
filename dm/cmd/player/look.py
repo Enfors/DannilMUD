@@ -27,7 +27,7 @@ class Cmd(player_cmd.PlayerCmd):
         else:
             disp += "none"
 
-        disp += "</>\n"
+        disp += "</>"
 
         contents = room.query_contents()
 
@@ -38,4 +38,4 @@ class Cmd(player_cmd.PlayerCmd):
             else:
                 disp += obj.query("short") + "\n"
 
-        user.recv_tag_text(disp)
+        user.recv_tag_text(disp, indent1 = 2)

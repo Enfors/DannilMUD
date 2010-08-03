@@ -77,8 +77,12 @@ affected."""
             
 
     def convert_tag_text(self, text, body = None, prefs = None, width = 0,
-                         indent1 = 0, indent2 = 0):
-        disp = "" + " " * indent1
+                         indent1 = 0, indent2 = 0, leading_nl = False):
+        if leading_nl:
+            disp = "\n"
+        else:
+            disp = ""
+        disp += " " * indent1
         line_len = indent1
         space_needed = False
 
@@ -94,17 +98,22 @@ affected."""
                 parts = part.strip(" ").split(" ")
 
                 for part in parts:
+
                     if width and line_len + len(part) > width:
                         disp += "\n" + " " * indent2
                         space_needed = False
                         line_len = indent2
 
-                    if space_needed:
+                    if space_needed and part[0] != "\n":
                         disp += " "
                         line_len += 1
 
                     disp += part
-                    space_needed = True
+                    if part[-1:] == "\n":
+                        space_needed = False
+                    else:
+                        space_needed = True
+
                     line_len += len(part)
 
             kind, part, text = self._get_token(text)

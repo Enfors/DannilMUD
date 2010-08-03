@@ -27,5 +27,6 @@ class Cmd(player_cmd.PlayerCmd):
         say_event = say_evt.SayEvt()
         say_event.set_operators([user])
         say_event.set_text("<say>$N0 $v0say:</> %s" % str)
+        say_event.set_leading_nl(True)
         say_event.activate()
 
