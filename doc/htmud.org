@@ -211,6 +211,26 @@ Messages (plain text) needs to be transmitted between different game
 objects to report in-game occurances. These occurances are called
 events.
 
+**** Event class hierarchy
+- Evt
+  - ComEvt (Communication Event)
+    - SayEvt
+    - TellEvt
+  - ActionEvt
+    - CombatEvt
+
+**** The broadcast bool
+The broadcast affects to whom the event is shown.
+
+- Off: Only sent to the doer and target (if set).
+- On: Broadcast to the rooms of the doer and the target.
+
+**** Event activation
+This is what happens when the activate method is called in an Event:
+
+1. If broadcast is False:
+   1. If event.target is set:
+      1. Call target.recv_evt(evt)
 *** Daemons
 **** The update daemon
 The update daemon's sole purpose in life is to make it possible to

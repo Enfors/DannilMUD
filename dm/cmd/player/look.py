@@ -32,7 +32,8 @@ class Cmd(player_cmd.PlayerCmd):
 
         for obj in contents:
             if obj == user:
-                disp += "(yourself)\n"
+                #disp += "(yourself)\n"
+                continue
             else:
                 disp += obj.query("short") + "\n"
 

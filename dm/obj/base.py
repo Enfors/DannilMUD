@@ -39,7 +39,10 @@ class Base:
             if func_name in dir(self):
                 return eval("self.%s()" % func_name)
             else:
-                return self.props[prop]
+                if prop in self.props:
+                    return self.props[prop]
+                else:
+                    return None
         except KeyError:
             return None
 

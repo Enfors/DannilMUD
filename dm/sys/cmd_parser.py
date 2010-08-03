@@ -14,21 +14,23 @@ class CmdParser:
         self.wiz_cmds    = [ ]
         self.admin_cmds  = [ ]
 
-        self.load_all_cmds()
+        self.load_all_cmd_lists()
 
-    
+
     def parse(self, input, user):
         words = input.split(" ")
-        cmd_string = words[0]
+        cmd_name = words[0]
 
-        if cmd_string in self.player_cmds:
-            cmd = self.player_cmds[cmd_string]
-        else:
+        cmd_path = self.find_cmd_path(cmd_name, user)
+        
+        if not cmd_path:
             user.recv_text("What?\n")
-            return
+            return False
+
+        cmd = update_d.update_d.request_obj(cmd_path, "Cmd")
 
         if len(words) > 1:
-            rule = "%s STR" % cmd_string
+            rule = "%s STR" % cmd_name
             if rule in cmd.rules:
                 str = " ".join(words[1:]).replace("'", "\\'")
                 eval("cmd.rule_%s(user, '%s')" % (rule.replace(" ", "_"),
@@ -42,15 +44,32 @@ class CmdParser:
             user.recv_text("What?\n")
 
 
-    def load_all_cmds(self):
+    def find_cmd_path(self, cmd_name, user):
+        cmd_lists = [ self.player_cmds ]
+
+        if user.query("is_wiz"):
+            cmd_lists.append(self.wiz_cmds)
+
+        if user.query("is_admin"):
+            cmd_lists.append(self.admin_cmds)
+
+        for cmd_list in cmd_lists:
+            if cmd_name in cmd_list:
+                cmd_path = cmd_list[cmd_name] + "." + cmd_name
+                return cmd_path 
+
+        return None
+
+
+    def load_all_cmd_lists(self):
         """Load all commands for players, wizards and admins."""
-        self.player_cmds = self._load_cmds(player_cmds_dir)
-        self.wiz_cmds    = self._load_cmds(wiz_cmds_dir)
-        self.admin_cmds  = self._load_cmds(admin_cmds_dir)
+        self.player_cmds = self._load_cmd_list(player_cmds_dir)
+        self.wiz_cmds    = self._load_cmd_list(wiz_cmds_dir)
+        self.admin_cmds  = self._load_cmd_list(admin_cmds_dir)
 
 
-    def _load_cmds(self, dir):
-        cmd_dict = { }
+    def _load_cmd_list(self, dir):
+        cmd_list = { }
         file_names = os.listdir(dir)
 
         dir = dir.replace("/", ".")
@@ -68,11 +87,9 @@ class CmdParser:
             
             file_name = file_name[:-3]
 
-            cmd = update_d.update_d.request_obj("%s.%s" % (dir, file_name),
-                                                "Cmd")
-            cmd_dict[file_name] = cmd
+            cmd_list[file_name] = dir
 
-        return cmd_dict
+        return cmd_list
                      
 
 

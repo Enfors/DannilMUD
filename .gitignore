@@ -7,3 +7,4 @@ dm/cmd/admin/*.pyc
 dm/daemon/*.pyc
 dm/obj/*.pyc
 dm/sys/*.pyc
+test
