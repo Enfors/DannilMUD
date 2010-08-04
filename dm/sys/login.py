@@ -3,6 +3,7 @@
 import os
 
 import dm.daemon.update_d as update_d
+import dm.sys.net         as net
 
 class Parser:
 
@@ -61,6 +62,7 @@ Returns (cmd, (arg_list))."""
             con.num_failed_logins += 1
         elif os.path.exists("user/%s" % con.login):
             con.write("Password: ")
+            #con.write(net.DONT_ECHO)
             con.login_state = "awaiting_passwd"
             return
         else:

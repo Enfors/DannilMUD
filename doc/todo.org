@@ -1,7 +1,9 @@
-* Design
-** Technical design
-** Game design
-* Implementation
+* TODO Critical
+** TODO Telnet protocol compliance
+*** TODO Negotiation
+** TODO World
+*** TODO Rooms
+**** TODO Walking around
 ** Data storage
 *** DONE Create object
     CLOSED: [2010-07-26 Mon 00:28]
@@ -11,17 +13,22 @@
     CLOSED: [2010-07-26 Mon 00:28]
 Implement obj.set(prop, value)
 
-*** TODO Create query function
+*** DONE Create query function
+    CLOSED: [2010-08-04 Wed 08:19]
 Implement obj.query(prop)
 
 **** TODO Raise exception for non-existant prop
 
-*** TODO Support custom set functions
+*** DONE Support custom set functions
+    CLOSED: [2010-08-04 Wed 08:19]
 If obj.set_prop() exists, call it instead of obj.set(prop)
 
-*** TODO Support custom query functions
+*** DONE Support custom query functions
+    CLOSED: [2010-08-04 Wed 08:19]
 If obj.query_prop() exists, call it instead of obj.query(prop)
 
 ** Daemons
 *** Plants
 *** Weather
+* Essential
+* Basic

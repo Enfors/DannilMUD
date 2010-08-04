@@ -5,6 +5,17 @@
 
 import socket, select
 
+TELNET_ECHO =   1
+
+TELNET_WILL = 251
+TELNET_WONT = 252
+TELNET_DO   = 253
+TELNET_DONT = 254
+TELNET_IAC  = 255                       # Telnet "Interpret As Command"
+
+DO_ECHO   = "%c%c%c" % (TELNET_IAC, TELNET_DO,   TELNET_ECHO)
+DONT_ECHO = "%c%c%c" % (TELNET_IAC, TELNET_DONT, TELNET_ECHO)
+
 ###############################################
 #
 # Class Con
@@ -42,6 +53,9 @@ class Con:
         """Call this function to ask the socket to queue data for
         sending."""
         #print "  Con.write() called."
+        #data = data.replace("\n", "\r\n")
+        #data = data.encode("ascii")
+        #self.write_buf += str(data)
         self.write_buf += data.replace("\n", "\r\n")
         self._watch_write()
 
@@ -97,11 +111,26 @@ class Con:
     def _read_now(self):
         """Called when incoming data is available."""
         try:
-            self.read_buf += self.sock.recv(4096).decode("UTF-8")
+            bytes = self.sock.recv(4096)#.decode("UTF-8")
+            
+            if len(bytes) == 0: # If EOF (client disconnected)
+                print("[net] Client disconnected.")
+                self.end()
+                return
+
+            print("Data type: %s (%s)" % (type(bytes).__name__, bytes))
+
+            while len(bytes) and bytes[0] == TELNET_IAC:
+               bytes = self._handle_inc_iac(bytes[1:])
+
+            if len(bytes):
+                self.read_buf = bytes.decode("UTF-8")
+            else:
+                return None
         except:
-            print("[net] Error on socket (raise commented out)")
-            #self.end()
-            #raise
+            print("[net] Error on socket")
+            self.end()
+            raise
 
         text = self.read_buf
         self.read_buf = ""
@@ -116,6 +145,7 @@ class Con:
 
         # Send data.
         bytes_written = self.sock.send(self.write_buf.encode("ascii"))
+        #bytes_written = self.sock.send(self.write_buf)
 
         # Remove the data that was actually sent from the buffer.
         self.write_buf = self.write_buf[bytes_written:]
@@ -172,6 +202,37 @@ class Con:
         neither read nor write data."""
         self.mask = 0
         self.con_man.unregister_for_poll(self, self.mask)
+
+
+    def _handle_inc_iac(self, bytes):
+        """Called when an Telnet IAC character (255) arrives."""
+        print("Telnet:")
+
+        if bytes[0] == TELNET_DO:
+            bytes = self._handle_inc_do(bytes[1:])
+        elif bytes[0] == TELNET_WILL:
+            bytes = self._handle_inc_will(bytes[1:])
+        else:
+            print("  Unhandled option: %d" % bytes[0])
+
+        return bytes
+
+
+    def _handle_inc_do(self, bytes):
+        print("  DO")
+
+        print("    Unhandled option: %d" % bytes[0])
+
+        return bytes[1:]
+
+
+    def _handle_inc_will(self, bytes):
+        """Called when a Telnet WILL arrives."""
+        print("  WILL")
+
+        print("    Unhandled options: %d" % bytes[0])
+        
+        return bytes[1:]
 
 
 #####################################################
@@ -239,11 +300,12 @@ class ConMan:
                           "fd %d from %s:%d." %
                       (new_sock.fileno(), ip, port))
                 self._new_con(new_sock, input_handler)
-            elif event == select.POLLIN:
+            elif event & select.POLLIN:
                 self._read_event(fd)
-            elif event == select.POLLOUT:
+            elif event & select.POLLOUT:
                 self._write_event(fd)
             else:
+                print("Event: %d" % event)
                 self._error_event(fd)
 
 
@@ -262,8 +324,8 @@ class ConMan:
     
             
     def end_con(self, con):
-        #print("[net] Closing connection on fd %d from %s:%d." % \
-        #    (con.sock.fileno(), con.remote_ip, con.remote_port))
+        print("[net] Closing connection on fd %d from %s:%d." % \
+            (con.sock.fileno(), con.remote_ip, con.remote_port))
         if con.user_char:
             print("[net] %s logged out from %s:%d." % \
                       (con.user_char.query_cap_name(),
@@ -302,11 +364,10 @@ class ConMan:
         """Called when data is ready to be read on a socket."""
         con = self.cons[fd]
         text = con._read_now()
-        #self.broadcast(con.read_buf + "\n")
 
-        # Call the callback to handle this input.
-        #apply(con.input_handler, (con, text))
-        con.input_handler(*(con, text))
+        # Text could be None, if it was just IAC commands
+        if text:
+            con.input_handler(*(con, text))
 
 
     def _write_event(self, fd):
