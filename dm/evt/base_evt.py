@@ -133,7 +133,9 @@ class Evt:
             for i in range(0, len(verb)):
                 if not verb[i].isalpha():
                     return verb[:i] + "s" + verb[i:]
-            
+
+            if verb[-1] == "y":
+                verb = verb[:-1] + "ie"
             return verb + "s"
     
 

@@ -9,17 +9,17 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("status")
 
 
-    def rule_status(self, user):
+    def rule_status(self, body, args):
         disp = "Wizard : "
-        if user.query("is_wiz"):
+        if body.query("is_wiz"):
             disp += "Yes\n"
         else:
             disp += "No\n"
 
         disp += "Admin  : "
-        if user.query("is_admin"):
+        if body.query("is_admin"):
             disp += "Yes\n"
         else:
             disp += "No\n"
 
-        user.recv_text(disp)
+        body.recv_text(disp)

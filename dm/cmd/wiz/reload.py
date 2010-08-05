@@ -12,9 +12,9 @@ class Cmd(wiz_cmd.WizCmd):
         self.add_rule("reload STR")
 
 
-    def rule_reload(self, user):
+    def rule_reload(self, user, args):
         user.recv_text("What do you want to reload?\n")
 
 
-    def rule_reload_STR(self, user, module_path):
-        update_d.update_d.reload_module(module_path)
+    def rule_reload_STR(self, user, args):
+        update_d.update_d.reload_module(args[0])

@@ -9,10 +9,10 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("wizme")
 
 
-    def rule_wizme(self, user):
-        if user.query_name() == "dannil":
-            user.set("is_wiz",   1)
-            user.set("is_admin", 1)
-            user.recv_text("Done. You are now a Wizard.\n")
+    def rule_wizme(self, body, args):
+        if body.query_name() == "dannil":
+            body.set("is_wiz",   1)
+            body.set("is_admin", 1)
+            body.recv_text("Done. You are now a Wizard.\n")
         else:
-            user.recv_text("Sorry, I can not allow that.\n")
+            body.recv_text("Sorry, I can not allow that.\n")

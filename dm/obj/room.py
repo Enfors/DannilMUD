@@ -18,6 +18,7 @@ class Room(container.Container):
         container.Container.__init__(self)
 
         self.set("object_type", "room")
+        self.exits = { }
 
         #if short:
         #    self.set("short", short)
@@ -31,21 +32,22 @@ class Room(container.Container):
         # Can accept any amount of weight
         self.set("weight_cap", 0)
 
-        self.set("exists", { })
 
+    def add_exit(self, direction, target_room_path, both_ways = True):
 
-    def add_exit(self, direction, target_room, both_ways = True):
+        exits = self.exits
 
-        exits = self.query("exits") or { }
-
+        target_room = update_d.update_d.request_obj(target_room_path,
+                                                    "Room")
+        
         if target_room.query("object_type") != "room":
             # todo: raise an exception here, remove print & return
             print("Target is not a room")
             return False
 
-        exits[direction] = target_room
+        exits[direction] = target_room_path
 
-        self.set("exits", exits)
+        #self.set("exits", exits)
         
         if both_ways:
             target_room.add_exit(reverse_direction[direction], self,

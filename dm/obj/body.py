@@ -28,5 +28,5 @@ class Body(container.Container):
 
         text = text_d.convert_tag_text(text, self, None, 76, 
                                        indent1, indent2, leading_nl)
-        return self.recv_text(text + "\n")
+        return self.recv_text(text)
 

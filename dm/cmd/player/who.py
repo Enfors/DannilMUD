@@ -10,15 +10,17 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("who")
 
 
-    def rule_who(self, user):
+    def rule_who(self, body, args):
         user_man = update_d.update_d.request_obj("sys.user_man",
                                                  "UserMan")
 
         users = user_man.query_users()
 
-        user.con.write("Who's loggged on\n"
-                       "================\n")
-
+        disp = "Who's loggged on\n" \
+            "================\n"
         
         for u in users.values():
-            user.con.write(u.query_cap_name() + "\n")
+            disp += u.query_cap_name() + "\n"
+
+        body.recv_tag_text(disp)
+

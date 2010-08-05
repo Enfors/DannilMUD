@@ -253,12 +253,71 @@ class in each of them.
 
 There are different directories where commands reside.
 
-| Directory   | Description                        |
-|-------------+------------------------------------|
-| cmds/player | Commands available to all users    |
-| cmds/wiz    | Commands available only to wizards |
-| cmds/admin  | Commands available only to admins  | 
+| Directory  | Description                        |
+|------------+------------------------------------|
+| cmd/player | Commands available to all users    |
+| cmd/wiz    | Commands available only to wizards |
+| cmd/admin  | Commands available only to admins  |
   
+***** Parsing algorithm
+The parser works with two sets of data.
+
+1. The input from a user, and
+2. The parsing rules for each command.
+
+****** Parsing rules
+Parsing rules look like this:
+
+- look
+- look at OBJ
+- give OBJ to LIV
+- say STR
+
+The words in capital letters (OBJ, LIV, STR) are tokens.
+
+****** Tokens
+******* OBJ
+OBJ matches an object. It can have any of the following forms:
+
+- (the) (Nth) (adjective) object_name
+
+The words within parenthesis are optional, and can appear in any combination,
+but only in that order.
+
+******* LIV
+LIV represents a living body. It will match anything in the environment
+or within the user which is considered to be living.
+
+******* STR
+STR will match any arbitrary string, including spaces.
+
+****** The algorithm
+1. Find a command that matches the first word in the input.
+2. Strip away the command from the input.
+3. Foreach of that command's rules:
+   1. Check if the rule matches the input.
+      1. Foreach word (token / plain) in the rule:
+	 1. Check if it matches the first part of the input.
+	    1. If it matches, strip that part away and continue with the
+	       next word in the rule.
+	    2. If it doesn't match, then return; this rule doesn't match.
+      2. Check if there is still input left.
+	 1. If there is not, then the rule matches the input. Return
+	    successfully.
+	 2. If there is still input, then return failure; this rule doesn't
+	    match the input.
+4. Call the the function in the command that corresponds to the
+   matching rule.
+*** Area creation
+1. To create an area, first you create a directory for it (probably
+   under the world directory).
+2. Next step is to create the first room. This is done with the
+   command "mkroom", which takes the area's path as an argument.
+3. The newly created room saves its path. This is needed to create
+   exits.
+4. To create additional rooms, stand in the first room and type
+   "dig DIR".
+
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and
 "mudlib". The advantage of the division would be that it would be

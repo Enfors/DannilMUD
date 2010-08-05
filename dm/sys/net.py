@@ -118,7 +118,7 @@ class Con:
                 self.end()
                 return
 
-            print("Data type: %s (%s)" % (type(bytes).__name__, bytes))
+            #print("Data type: %s (%s)" % (type(bytes).__name__, bytes))
 
             while len(bytes) and bytes[0] == TELNET_IAC:
                bytes = self._handle_inc_iac(bytes[1:])
@@ -144,7 +144,8 @@ class Con:
             return
 
         # Send data.
-        bytes_written = self.sock.send(self.write_buf.encode("ascii"))
+        #bytes_written = self.sock.send(self.write_buf.encode("ascii"))
+        bytes_written = self.sock.send(self.write_buf.encode("UTF-8"))
         #bytes_written = self.sock.send(self.write_buf)
 
         # Remove the data that was actually sent from the buffer.

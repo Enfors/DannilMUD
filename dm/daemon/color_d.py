@@ -27,7 +27,7 @@ class ColorD(base_daemon.Daemon):
         
         self.color_config = {
             "/"          : "reset",
-            "emote"      : "green",
+            "emote"      : "green-bold",
             "room_short" : "yellow-bold",
             "room_long"  : "yellow",
             "room_exits" : "yellow",

@@ -11,14 +11,14 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("emote STR")
 
 
-    def rule_emote(self, user):
+    def rule_emote(self, body, args):
         user.recv_text("What do you want to emote?\n")
 
         
-    def rule_emote_STR(self, user, str):
+    def rule_emote_STR(self, body, args):
         emote_event = emote_evt.EmoteEvt()
-        emote_event.set_operators([user])
-        emote_event.set_text("<emote>%s %s</>" % 
-                             (user.query_cap_name(), str))
+        emote_event.set_operators([body])
+        emote_event.set_text("<emote>%s %s</>\n" % 
+                             (body.query_cap_name(), " ".join(args)))
         emote_event.activate()
 

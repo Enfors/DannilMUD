@@ -9,16 +9,18 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("look")
 
 
-    def rule_look(self, user):
-        room = user.query_env()
+    def rule_look(self, body, args):
+        room = body.query_env()
 
         if not room:
-            user.recv_text("You're.... nowhere. How'd that happen?\n")
+            body.recv_text("You're.... nowhere. How'd that happen?\n")
 
-        disp = "<room_short>%s</>\n<room_long>%s</>\n" % \
+        disp = "<room_short>%s</>\n<room_long>%s</>\n\n" % \
             (room.query("short"), room.query("long"))
 
-        disp += "\n  <room_exits>Obvious exits: "
+        body.recv_tag_text(disp, indent1 = 2)
+
+        disp = "<room_exits>Obvious exits: "
 
         exits = room.query("exits")
 
@@ -27,15 +29,15 @@ class Cmd(player_cmd.PlayerCmd):
         else:
             disp += "none"
 
-        disp += "</>"
+        disp += "</>\n"
 
         contents = room.query_contents()
 
         for obj in contents:
-            if obj == user:
+            if obj == body:
                 #disp += "(yourself)\n"
                 continue
             else:
                 disp += obj.query("short") + "\n"
 
-        user.recv_tag_text(disp, indent1 = 2)
+        body.recv_tag_text(disp, indent1 = 2)

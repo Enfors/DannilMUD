@@ -9,11 +9,11 @@ class Cmd(player_cmd.PlayerCmd):
         self.add_rule("quit")
 
 
-    def rule_quit(self, user):
-        user.close_con()
+    def rule_quit(self, body, args):
+        body.close_con()
         
-        env = user.query_env()
+        env = body.query_env()
 
         if env:
-            env.recv_text("%s left the game.\n" % user.query_cap_name())
+            env.recv_text("%s left the game.\n" % body.query_cap_name())
         
