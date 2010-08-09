@@ -3,7 +3,8 @@
 import dm.daemon.update_d as update_d
 
 special_verbs = {
-    "go"     : "goes"
+    "go"     : "goes",
+    "try"    : "tries",
 }
 
 class Evt:
@@ -142,8 +143,8 @@ class Evt:
         else:
             verb, rest = self._separate_nonalphas(verb)
 
-            if verb[-1] == "y":
-                verb = verb[:-1] + "ie"
+            #if verb[-1] == "y":
+            #    verb = verb[:-1] + "ie"
 
             if verb in special_verbs:
                 return special_verbs[verb] + rest
@@ -153,7 +154,6 @@ class Evt:
 
     def _separate_nonalphas(self, text):
         """If text is 'foo!', return 'foo', '!'."""
-        rest = ""
         for i in range(0, len(text)):
             if not text[i].isalpha():
                 rest = text[i:]
