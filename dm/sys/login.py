@@ -92,8 +92,7 @@ Returns (cmd, (arg_list))."""
             return
 
         con.login_state = "idle"
-        con.write("Welcome to DannilMUD, %s!\n> " % \
-                  con.login.capitalize())
+        con.write("> ")
         print("[net] %s logged in." % user.query_cap_name())
 
 

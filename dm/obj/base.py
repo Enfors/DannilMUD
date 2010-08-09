@@ -5,6 +5,8 @@
 # class.
 #
 
+import os, pickle
+
 class Base:
     """The basic game object, which all other objects inherit."""
 
@@ -56,15 +58,19 @@ class Base:
     def move_to_env(self, target_env):
         """Move the specified object to the specified environment.
 
-can_add_contents() is called on the target environment first, to
+can_add_content() is called on the target environment first, to
 make sure that it can accept the object being moved.
 
 RETURNS:
   True  : If the move was successful
   False : If the move failed
 """
-        if target_env.can_add_contents(self):
-            if target_env.add_contents(self):
+        old_env = self.query_env()
+        if target_env.can_add_content(self):
+            if target_env.add_content(self):
+                if old_env:
+                    old_env.remove_content(self)
+
                 self.env = target_env
                 return True
 
@@ -92,29 +98,73 @@ RETURNS:
         pass
 
 
-    def __repr__(self):
-        val = self.query("short") + "\n"
+    def save(self, file_name):
+        #print("[base] Saving object under filename '%s'..." % file_name)
+        file = open(file_name, "wb")
+        try:
+            pickle.dump(self.props, file)
+        finally:
+            file.close()
 
-        room = self.env
+        return True
 
-        if room:
-            room = room.query("short")
-        else:
-            room = "None"
 
-        val += "  | Environment: %s\n" % room
+    def load(self, file_name):
+        """Loads properties from the specified file and stores them
+        as this object's properties.
 
-        prop_disp = ""
+        RETURNS:
+        - True, if the file exists and can be successfully loaded
+        - False, otherwise."""
+        if not os.path.exists(file_name):
+            return False
 
-        for key in self.props.keys():
-            prop_disp += "  +-%-20s: %s\n" % (key, str(self.props[key]))
+        file = open(file_name, "rb")
+        try:
+            self.props = pickle.load(file)
+        finally:
+            file.close()
 
-        if len(prop_disp):
-            val += "  | Properties:\n" + prop_disp
-        else:
-            val += "  | No properties.\n"
+        return True
+
+
+    def query_ref(self):
+        raise error.InternalError("Class has no overloaded query_ref() "
+                                  "function.")
+
+
+    def end(self):
+        """Call this function when you want to remove an object.
+        It will not actually be removed - you have to delete all
+        references to it for that."""
+
+        if self.env:
+            self.env.remove_content(self)
+
+
+    #def __repr__(self):
+        #val = self.query("short") + "\n"
+
+        #room = self.env
+
+        #if room:
+        #    room = room.query("short")
+        #else:
+        #    room = "None"
+
+        #val += "  | Environment: %s\n" % room
+
+        #prop_disp = ""
+
+        #for key in self.props.keys():
+        #    prop_disp += "  +-%-20s: %s\n" % (key, str(self.props[key]))
+
+        #if len(prop_disp):
+        #    val += "  | Properties:\n" + prop_disp
+        #else:
+        #    val += "  | No properties.\n"
         
-        return val
+        #return val
             
 
 if __name__ == "__main__":

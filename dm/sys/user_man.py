@@ -22,9 +22,15 @@ class UserMan:
 
         self.users[name] = user
         
-        street = update_d.update_d.request_obj("world.ooc.room.street1",
-                                               "Room")
-        user.move_to_env(street)
+        start_room = update_d.update_d.request_obj("obj.room",
+                                                   "Room",
+                                                   [ "obj.room",
+                                                     "world/ooc/room",
+                                                     [ 0, 0, 0 ] ] )
+        start_room.load()
+        start_room.recv_text("%s enters the game.\n" % name.capitalize())
+        user.move_to_env(start_room)
+        user.do_look()
 
         return user
 
@@ -32,8 +38,7 @@ class UserMan:
     def end_user(self, user):
         del self.users[user.query_name()]
         
-        if user.env:
-            user.env.remove_contents(user)
+        user.end()
 
 
     def query_users(self):

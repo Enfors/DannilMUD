@@ -1,6 +1,13 @@
-# leave_evt by Dannil
+# move_evt.py by Dannil
 
 import dm.evt.action_evt as action_evt
 
-class LeaveEvt(action_evt.ActionEvt):
+class MoveEvt(action_evt.ActionEvt):
+    pass
+
+class LeaveEvt(MoveEvt):
+    pass
+
+
+class EnterEvt(MoveEvt):
     pass

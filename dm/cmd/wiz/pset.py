@@ -20,5 +20,6 @@ class Cmd(wiz_cmd.WizCmd):
             return False
 
         env.set(prop, val)
+        env.save()
         body.recv_tag_text("Prop \"%s\" updated.\n" % prop)
 

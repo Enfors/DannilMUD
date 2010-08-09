@@ -49,7 +49,8 @@ class CmdParser:
         
         try:
             if not cmd_path:
-                raise ParseError("What?")
+                raise ParseError("I have no idea what \"%s\" means.\n" %
+                                 cmd_name)
 
             cmd = update_d.update_d.request_obj(cmd_path, "Cmd")
 
@@ -60,7 +61,7 @@ class CmdParser:
             for orig_rule in cmd.rules:
                 input = orig_input[:]
                 rule  = orig_rule[:]
-                print("\nChecking rule %s..." % rule)
+                #print("\nChecking rule %s..." % rule)
                 try:
                     args = self.match_input_to_rule(input, rule)
 
@@ -68,7 +69,10 @@ class CmdParser:
                     #print("This rule matches. All done.")
                     func_name = "cmd.rule_%s(body, args)" % \
                         "_".join(orig_rule)
-                    return eval(func_name)
+                    try:
+                        return eval(func_name)
+                    except error.CmdFailed as e:
+                        body.recv_tag_text(str(e))
                 #else:
                     #print("This rule does not match.")
                     #pass
@@ -81,7 +85,7 @@ class CmdParser:
             raise ParseError("I understood \"%s\", but %s" %
                              (cmd_name, fail_explanation))
         except ParseError as e:
-            body.recv_tag_text(str(e) + "\n")
+            body.recv_tag_text(str(e))
             return False, None
 
 
@@ -89,7 +93,7 @@ class CmdParser:
         args = [ ]
 
         while len(rule):
-            print("+-Checking token %s..." % rule[0])
+            #print("+-Checking token %s..." % rule[0])
             if not rule[0].isupper():
                 input, rule, args = self.match_plain_word(input, rule, 
                                                           args)
@@ -112,7 +116,7 @@ class CmdParser:
             elif rule[0] == "WORD":
                 input, rule, args = self.match_WORD(input, rule, args)
 
-            print("+-Done with this token. Remaining input: %s" % input)
+            #print("+-Done with this token. Remaining input: %s" % input)
 
         if len(input):
             raise IncorrectInput("I didn't understand the last part.")
@@ -121,22 +125,26 @@ class CmdParser:
 
 
     def match_plain_word(self, input, rule, args):
-        print("+---Matching plain word '%s'..." % rule[0])
+        #print("+---Matching plain word '%s'..." % rule[0])
         #word = rule.pop()
-        word, rule = self._pop_first(rule)
+        rule_word, rule = self._pop_first(rule)
 
         if len(input) == 0:
             raise IncorrectInput("I was expecting a \"%s\" somewhere "
-                                 "in there." % word)
+                                 "in there.\n" % word)
 
         #input.pop(0)
-        tmp, input = self._pop_first(input)
+        entered_word, input = self._pop_first(input)
+        
+        if entered_word != rule_word:
+            raise IncorrectInput("I was expecting a \"%s\" somewhere "
+                                 "in there.\n" % word)            
 
         return input, rule, args
 
 
     def match_STR(self, input, rule, args):
-        print("+---Matching string '%s'..." % " ".join(input))
+        #print("+---Matching string '%s'..." % " ".join(input))
         #rule.pop()
         tmp, rule = self._pop_first(rule)
 
@@ -158,7 +166,7 @@ class CmdParser:
 
 
     def match_DIR(self, input, rule, args):
-        print("+---Matching DIR...")
+        #print("+---Matching DIR...")
         if len(input) == 0:
             raise IncorrectInput("I was expecting a direction too.")
 
@@ -174,7 +182,7 @@ class CmdParser:
 
 
     def match_PATH(self, input, rule, args):
-        print("+---Matching PATH...")
+        #print("+---Matching PATH...")
 
         if len(input) == 0:
             raise IncorrectInput("I was expecting a path too.")
@@ -188,10 +196,10 @@ class CmdParser:
 
 
     def match_WORD(self, input, rule, args):
-        print("+---Matching WORD...")
+        #print("+---Matching WORD...")
 
         if len(input) == 0:
-            raise IncorrectInput("I was expecting an additional word.")
+            raise IncorrectInput("I was expecting an additional word.\n")
 
         word, input = self._pop_first(input)
         tmp,  rule  = self._pop_first(rule)

@@ -20,16 +20,23 @@ contains the living's inventory)."""
         self.set("weight_cap", 1000)
 
         
-    def add_contents(self, obj):
-        if not self.can_add_contents(obj):
+    def add_content(self, obj):
+        if not self.can_add_content(obj):
             return False
         else:
             self.contents.append(obj)
             obj.set_env(self)
             return True
 
+    
+    def remove_content(self, obj):
+        if obj in self.contents:
+            self.contents.remove(obj)
 
-    def can_add_contents(self, obj):
+        return True
+
+
+    def can_add_content(self, obj):
         """Return True if the specified object can be held in this container.
 Otherwise, False is returned. Both weight and bulk is checked."""
 
@@ -81,24 +88,18 @@ Otherwise, False is returned. Both weight and bulk is checked."""
         return held_bulk
 
 
-    def remove_contents(self, obj):
-        self.contents.remove(obj)
+    #def __repr__(self):
+        #disp = base.Base.__repr__(self)
+        #contents_disp = ""
 
-        return True
+        #for obj in self.contents:
+        #    contents_disp += "  +-%s\n" % obj.query("short")
 
-
-    def __repr__(self):
-        disp = base.Base.__repr__(self)
-        contents_disp = ""
-
-        for obj in self.contents:
-            contents_disp += "  +-%s\n" % obj.query("short")
-
-        if len(contents_disp) == 0:
-            return disp + "  | No contents.\n"
-        else:
-            return "%s  | Contents: (weight: %d)\n%s" % \
-                (disp, self.query_held_weight(), contents_disp)
+        #if len(contents_disp) == 0:
+        #    return disp + "  | No contents.\n"
+        #else:
+        #    return "%s  | Contents: (weight: %d)\n%s" % \
+        #        (disp, self.query_held_weight(), contents_disp)
 
 
 

@@ -2,10 +2,15 @@
 
 import dm.daemon.update_d as update_d
 
+special_verbs = {
+    "go"     : "goes"
+}
+
 class Evt:
     def __init__(self):
         self.broadcast  = True
         self.operators  = ( )
+        self.excepted_observers = [ ]
         self.doer       = None
         self.target     = None
         self.text       = ( )
@@ -38,6 +43,11 @@ class Evt:
 
     def query_operators(self, operators):
         return self.operators
+
+
+    def set_excepted_observers(self, excepted_observers):
+        """Set a list of bodies which should never see the event."""
+        self.excepted_observers = excepted_observers
 
 
     def set_doer(self, doer):
@@ -96,8 +106,12 @@ class Evt:
 
 
     def _handle_var(self, word, observer_num):
-        # todo: handle ValueError on the following line
-        operator_num = int(word[1])
+        try:
+            operator_num = int(word[1])
+        except ValueError:
+            raise error.InternalError("Expected number in position 1 "
+                                      "of '%s'." % word)
+
         if word[0] == "N":      # Name (capitalize "You")
             return self._handle_name(word[2:], observer_num,
                                      operator_num, capitalize = True)
@@ -126,17 +140,28 @@ class Evt:
         if observer_num == operator_num:
             return verb
         else:
-#            pos = verb.find("<")
-
-#            if pos != -1:
-#                return verb[:pos] + "s" + verb[pos:]
-            for i in range(0, len(verb)):
-                if not verb[i].isalpha():
-                    return verb[:i] + "s" + verb[i:]
+            verb, rest = self._separate_nonalphas(verb)
 
             if verb[-1] == "y":
                 verb = verb[:-1] + "ie"
-            return verb + "s"
+
+            if verb in special_verbs:
+                return special_verbs[verb] + rest
+            else:
+                return verb + "s" + rest
+
+
+    def _separate_nonalphas(self, text):
+        """If text is 'foo!', return 'foo', '!'."""
+        rest = ""
+        for i in range(0, len(text)):
+            if not text[i].isalpha():
+                rest = text[i:]
+                text = text[:i]
+
+                return text, rest
+
+        return text, ""
     
 
     def _query_name(self, operator):
@@ -160,7 +185,8 @@ class Evt:
             recipients = self.operators
 
         for recipient in recipients:
-            self._notify_recipient(recipient)
+            if recipient not in self.excepted_observers:
+                self._notify_recipient(recipient)
 
 
     def _notify_recipient(self, recipient):

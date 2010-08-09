@@ -34,7 +34,6 @@ class UserChar(body.Body):
 
 
     def close_con(self):
-        self.con.write("[Closing connection. Good bye.]\n")
         self.con.end_after_write()
 
 
@@ -49,9 +48,11 @@ class UserChar(body.Body):
     def save(self):
         if not len(self.name):
             raise SaveErrorNoName
-        file = open("user/%s" % self.query_name(), "wb")
-        pickle.dump(self.props, file)
-        file.close()
+
+        file_name = self.query_file_name()
+
+        body.Body.save(self, file_name)
+
         print("[user] %s saved." % self.query_cap_name())
 
 
@@ -61,11 +62,10 @@ class UserChar(body.Body):
 
         file_name = "user/%s" % self.query_name()
         
-        if os.path.exists(file_name):
-            file = open("user/%s" % self.query_name(), "rb")
-            self.props = pickle.load(file)
-            file.close()
+        body.Body.load(self, file_name)
 
         return self
 
     
+    def query_file_name(self):
+        return "user/%s" % self.query_name()

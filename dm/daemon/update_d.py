@@ -11,7 +11,7 @@ class UpdateD(base_daemon.Daemon):
         self.objects = { }
 
 
-    def request_obj(self, module_path, class_name):
+    def request_obj(self, module_path, class_name, args = None):
         # Remove trailing .py, if present
         if module_path[-3:] == ".py":
             module_path = module_path[:-3]
@@ -33,7 +33,10 @@ class UpdateD(base_daemon.Daemon):
         if not class_name in self.objects[module_path]:
             # The object is not loaded. Load it now.
 
-            class_path = "mod.%s.%s()" % (module_path, class_name)
+            if args:
+                class_path = "mod.%s.%s(args)" % (module_path, class_name)
+            else:
+                class_path = "mod.%s.%s()"     % (module_path, class_name)
 
             self.objects[module_path][class_name] = eval(class_path)
 

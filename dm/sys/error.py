@@ -5,3 +5,15 @@ class Error(Exception):
 
     def __str__(self):
         return self.text
+
+
+class InternalError(Error):
+    pass
+
+
+class BuildingError(Error):
+    pass
+
+
+class CmdFailed(Error):
+    pass

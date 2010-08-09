@@ -30,3 +30,35 @@ class Body(container.Container):
                                        indent1, indent2, leading_nl)
         return self.recv_text(text)
 
+    def do_look(self):
+        room = self.query_env()
+
+        if not room:
+            self.recv_text("You're.... nowhere. How'd that happen?\n")
+
+        disp = "<room_short>%s</>\n<room_long>%s</>\n\n" % \
+            (room.query("short"), room.query("long"))
+
+        self.recv_tag_text(disp, indent1 = 2)
+
+        disp = "<room_exits>Obvious exits: "
+
+        exits = room.query("exits")
+
+        if exits:
+            disp += ", ".join(exits.keys())
+        else:
+            disp += "none"
+
+        disp += "</>\n"
+
+        contents = room.query_contents()
+
+        for obj in contents:
+            if obj == self:
+                #disp += "(yourself)\n"
+                continue
+            else:
+                disp += obj.query("short") + "\n"
+
+        self.recv_tag_text(disp, indent1 = 2)
