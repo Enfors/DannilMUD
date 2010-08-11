@@ -59,6 +59,15 @@ class Body(container.Container):
                 #disp += "(yourself)\n"
                 continue
             else:
-                disp += obj.query("short") + "\n"
+                disp += obj.query("short").capitalize() + ".\n"
 
         self.recv_tag_text(disp, indent1 = 2)
+
+
+    def update(self):
+        """This function is called on bodies after they are loaded,
+        to update the object with new data, if data has been added
+        since the object was last saved."""
+
+        if not "ids" in self.props:
+            self.props["ids"] = [ self.query_name() ]

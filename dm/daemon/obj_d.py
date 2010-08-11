@@ -35,6 +35,10 @@ class ObjD(base_daemon.Daemon):
             #print("[obj_d] Returning %s for %s." % (self.objs[ref], ref))
             return self.objs[ref]
 
-        
+    
+    def request_master(self, ref):
+        return self.request(ref)
+
+
 OBJ_D = ObjD()
         

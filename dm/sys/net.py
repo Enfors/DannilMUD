@@ -56,6 +56,12 @@ class Con:
         #data = data.replace("\n", "\r\n")
         #data = data.encode("ascii")
         #self.write_buf += str(data)
+        
+        #disp = data
+        #if len(disp) > 10:
+        #    disp = disp[:10] + "..."
+        
+        #print("[net] write('%s')" % disp)
         self.write_buf += data.replace("\n", "\r\n")
         self._watch_write()
 
@@ -305,8 +311,17 @@ class ConMan:
                 self._read_event(fd)
             elif event & select.POLLOUT:
                 self._write_event(fd)
+            elif event & select.POLLPRI:
+                print("[net] POLLPRI")
+            elif event & select.POLLERR:
+                print("[net] POLLERR")
+            elif event & select.POLLHUP:
+                print("[net] POLLHUP")
+            elif event & select.POLLNVAL:
+                print("[net] POLLNVAL")
+                self._error_event(fd)
             else:
-                print("Event: %d" % event)
+                print("[net] Event: %d" % event)
                 self._error_event(fd)
 
 
@@ -321,6 +336,7 @@ class ConMan:
 
 
     def unregister_for_poll(self, con, mask):
+        #print("[net] Unregister for poll.")
         self.poller.unregister(con.query_fd())
     
             
@@ -364,6 +380,7 @@ class ConMan:
     def _read_event(self, fd):
         """Called when data is ready to be read on a socket."""
         con = self.cons[fd]
+        #print("[net] Read on fd %d." % fd)
         text = con._read_now()
 
         # Text could be None, if it was just IAC commands
@@ -374,6 +391,7 @@ class ConMan:
     def _write_event(self, fd):
         """Called when it is possible to write on a socket."""
         con = self.cons[fd]
+        #print("[net] Write on fd %d." % fd)
         con._write_now()
         
 

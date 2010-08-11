@@ -10,7 +10,8 @@ class Cmd(player_cmd.PlayerCmd):
 
 
     def rule_quit(self, body, args):
-        body.close_con()
+        #body.close_con()
+        body.end()
         
         env = body.query_env()
 

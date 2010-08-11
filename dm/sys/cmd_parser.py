@@ -63,7 +63,7 @@ class CmdParser:
                 rule  = orig_rule[:]
                 #print("\nChecking rule %s..." % rule)
                 try:
-                    args = self.match_input_to_rule(input, rule)
+                    args = self.match_input_to_rule(input, rule, body)
 
                     #if match:
                     #print("This rule matches. All done.")
@@ -79,7 +79,6 @@ class CmdParser:
                 except ParseWrongRule:
                     continue
                 except IncorrectInput as e:
-                    print("+-Exception: %s" % e)
                     fail_explanation = str(e)
 
             raise ParseError("I understood \"%s\", but %s" %
@@ -89,7 +88,7 @@ class CmdParser:
             return False, None
 
 
-    def match_input_to_rule(self, input, rule):
+    def match_input_to_rule(self, input, rule, body):
         args = [ ]
 
         while len(rule):
@@ -102,10 +101,20 @@ class CmdParser:
                 input, rule, args = self.match_STR(input, rule, args)
 
             elif rule[0] == "LIV":
-                input, rule, args = self.match_LIV(input, rule, args)
+                input, rule, args = self.match_LIV(input, rule, args, body)
 
-            elif rule[0] == "OBJ":
-                input, rule, args = self.match_OBJ(input, rule, args)
+            elif rule[0] == "OBJ":  # Objects in room AND inv
+                input, rule, args = self.match_OBJ(input, rule, args, body,
+                                                   check_room = True,
+                                                   check_inv  = True)
+
+            elif rule[0] == "ROBJ": # Objects in room only
+                input, rule, args = self.match_OBJ(input, rule, args, body,
+                                                   check_room = True)
+
+            elif rule[0] == "IOBJ": # Objects in inv only
+                input, rule, args = self.match_OBJ(input, rule, args, body,
+                                                   check_inv  = True)
 
             elif rule[0] == "DIR":
                 input, rule, args = self.match_DIR(input, rule, args)
@@ -119,7 +128,7 @@ class CmdParser:
             #print("+-Done with this token. Remaining input: %s" % input)
 
         if len(input):
-            raise IncorrectInput("I didn't understand the last part.")
+            raise IncorrectInput("I didn't understand the last part.\n")
         else:
             return args
 
@@ -138,7 +147,7 @@ class CmdParser:
         
         if entered_word != rule_word:
             raise IncorrectInput("I was expecting a \"%s\" somewhere "
-                                 "in there.\n" % word)            
+                                 "in there.\n" % rule_word)            
 
         return input, rule, args
 
@@ -149,7 +158,7 @@ class CmdParser:
         tmp, rule = self._pop_first(rule)
 
         if len(input) == 0:
-            raise IncorrectInput("I was expecting more.")
+            raise IncorrectInput("I was expecting more.\n")
 
         args.append(" ".join(input))
         input = [ ]
@@ -157,18 +166,41 @@ class CmdParser:
         return input, rule, args
 
 
-    def match_LIV(self, input, rule, args):
+    def match_LIV(self, input, rule, args, body):
         raise ParseError("LIV parsing rules not implemented.")
 
 
-    def match_OBJ(self, input, rule, args):
-        raise ParseError("OBJ parsing rules not implemented.")
+    def match_OBJ(self, input, rule, args, body, liv_only = False,
+                  check_inv = False, check_room = False):
+        found_objs = [ ]
+        adjectives = [ ]
+        
+        tmp, rule = self._pop_first(rule)
+
+        if len(input) == 0:
+            raise IncorrectInput("I was execting an object too.\n")
+
+        id, input = self._pop_first(input)
+
+        if check_room:
+            found_objs += self.find_room_objs(body, id, liv_only)
+        if check_inv:
+            found_objs += self.find_objs(body, id, liv_only)
+
+        if len(found_objs) == 0:
+            raise IncorrectInput("I do not see any \"%ss\" here.\n" % id)
+
+        print("Found %d objects." % len(found_objs))
+
+        args += [ found_objs[0] ]
+
+        return input, rule, args
 
 
     def match_DIR(self, input, rule, args):
         #print("+---Matching DIR...")
         if len(input) == 0:
-            raise IncorrectInput("I was expecting a direction too.")
+            raise IncorrectInput("I was expecting a direction too.\n")
 
         dir, input = self._pop_first(input)
         tmp, rule  = self._pop_first(rule)
@@ -177,7 +209,7 @@ class CmdParser:
             args.append(dir)
             return input, rule, args
         else:
-            raise IncorrectInput("\"%s\" is not a proper direction." % 
+            raise IncorrectInput("\"%s\" is not a proper direction.\n" % 
                                  dir.lower())
 
 
@@ -185,7 +217,7 @@ class CmdParser:
         #print("+---Matching PATH...")
 
         if len(input) == 0:
-            raise IncorrectInput("I was expecting a path too.")
+            raise IncorrectInput("I was expecting a path too.\n")
 
         path, input = self._pop_first(input)
         tmp,  rule  = self._pop_first(rule)
@@ -207,6 +239,30 @@ class CmdParser:
         args.append(word)
 
         return input, rule, args
+
+
+    def find_objs(self, container, id, adjectives = [ ], liv_only = False):
+        """Returns a list of objects in the container that match the
+        specified criteria."""
+        
+        found_objs = [ ]
+
+        for obj in container.query_contents():
+            print("Checking %s..." % obj.query("short"))
+
+            if id in obj.query("ids"):
+                found_objs.append(obj)
+
+        return found_objs
+
+    
+    def find_room_objs(self, body, id, adjectives = [ ], liv_only = False):
+        room = body.query_env()
+
+        if not room:
+            return [ ]
+        else:
+            return self.find_objs(room, id, adjectives, liv_only)
 
 
     def find_cmd_path(self, cmd_name, user):

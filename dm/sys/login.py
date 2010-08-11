@@ -92,20 +92,20 @@ Returns (cmd, (arg_list))."""
             return
 
         con.login_state = "idle"
-        con.write("> ")
+        #con.write("> ")
         print("[net] %s logged in." % user.query_cap_name())
 
 
     def login_state_idle(self, con, text):
         if len(text) == 0:
-            con.write("> ")
+            #con.write("> ")
             return
         
         cmd_parser = update_d.update_d.request_obj("sys.cmd_parser",
                                                    "CmdParser")
         cmd_parser.parse(text, con.query_user_char())
         
-        con.write("> ")
+        #con.write("> ")
 
         
     def login_state_verify_create(self, con, text):

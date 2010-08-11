@@ -18,7 +18,7 @@ class UserMan:
             user.set("short", name.capitalize())
         else:
             user = user.load()
-
+            user.update()
 
         self.users[name] = user
         
@@ -34,11 +34,11 @@ class UserMan:
 
         return user
 
-
+    
     def end_user(self, user):
         del self.users[user.query_name()]
         
-        user.end()
+        #user.end()
 
 
     def query_users(self):

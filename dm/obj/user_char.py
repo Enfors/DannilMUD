@@ -10,6 +10,15 @@ class UserChar(body.Body):
         body.Body.__init__(self)
         self.set_name(con.login)
         self.set_con(con)
+        self.set("long", "%s is a generic-looking user." %
+                 self.query_cap_name())
+
+    
+    def update(self):
+        body.Body.update(self)
+
+        self.set("long", "%s is a generic-looking user." %
+                 self.query_cap_name())
 
 
     def set_name(self, name):
@@ -33,7 +42,13 @@ class UserChar(body.Body):
         return self.con
 
 
+    def end(self):
+        body.Body.end(self)
+        self.close_con()
+
+
     def close_con(self):
+        print("[user_char] close_con()")
         self.con.end_after_write()
 
 

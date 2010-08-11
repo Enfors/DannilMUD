@@ -19,6 +19,8 @@ class Base:
             "It is, in fact, so utterly plain and uninteresting " \
             "that you can't even tell what it is. And nobody cares.")
 
+        self.set("ids", [ ])
+
         # Env = environment = which room the object is in.
         self.env = None
 
@@ -26,6 +28,9 @@ class Base:
 
 
     def setup(self):
+        """This function is called at the end of __init__. Its purpose
+        is to be overloaded by "leaf" classes, to be used to set
+        things up at object creation time."""
         pass
 
 
@@ -53,6 +58,34 @@ class Base:
                     return None
         except KeyError:
             return None
+
+
+    def set_name(self, name):
+        """Sets the name of the object. If the object doesn't already
+        have an id identical to the name, such an id is added."""
+        self.props[name] = name.lower()
+
+        ids = self.query("ids")
+
+        if not ids:
+            ids = [ ]
+        
+        if not name in ids:
+            ids.append(ids)
+
+        self.set_ids(ids)
+
+
+    def query_name(self):
+        return self.name
+
+
+    def set_ids(self, ids):
+        # If the argument isn't a list, then make a list of it.
+        if type(ids).__name__ == "str":
+            ids = [ ids ]
+
+        self.props["ids"] = ids
 
 
     def move_to_env(self, target_env):
@@ -94,7 +127,8 @@ RETURNS:
         pass
 
 
-    def recv_tag_text(self, text):
+    def recv_tag_text(self, text, indent1 = 0, indent2 = 0,
+                      leading_nl = False):
         pass
 
 
@@ -131,6 +165,12 @@ RETURNS:
     def query_ref(self):
         raise error.InternalError("Class has no overloaded query_ref() "
                                   "function.")
+
+
+    def query_desc(self):
+        """When someone looks at an object, this is the function
+        that gets called to return the object's description."""
+        return self.query("long")
 
 
     def end(self):

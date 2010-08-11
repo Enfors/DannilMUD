@@ -4,6 +4,12 @@ class Cmd:
     def __init__(self):
         self.rules = [ ]
 
+        self.setup()
+
+    
+    def setup(self):
+        pass
+
 
     def add_rule(self, rule):
         rule = rule.split()

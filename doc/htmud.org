@@ -345,6 +345,49 @@ world.ooc.mansion.-1,-3,2
 4. To create additional rooms, stand in the first room and type
    "dig DIR".
 
+*** User logout
+When a user logs out, the following needs to happen:
+
+- User removed from room :: user_char.end() -> base.end()
+- Stop polling :: con.end()
+- User removed from who list
+- Send "leave the game" event.
+- Tell connection to close after write
+- Wait for write to finish
+
+**** Involved code sections
+- user_char.end()
+- user_man.end_user()
+- con.end()
+- quit()
+
+**** Functions that need calling
+- user_char.end()
+  - 
+
+**** Current procedure
+Existing procedure:
+- quit()
+  - user_char.end()
+    - body.end()
+      - (fallthrough to super) base.end()
+	- Remove user object from room
+    - user_char.close_con()
+      - con.end_after_write()
+	- con.end()
+	  - con._dont_watch_anything()
+	  - con_man.end_con()
+	    - delete sockets from watchlist
+	    - delete con from cons list
+	    - user_char.con_closed()
+	      - user_man.end_user()
+		- remove user from who list
+		- #user_char.end() # <-- Recursion! Commented out.
+	  - sock.shutdown()
+	  - sock.close()
+	- con.end_after_write = True
+  - Send "left the game" to others
+
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and
 "mudlib". The advantage of the division would be that it would be
