@@ -4,7 +4,7 @@
 # This is the main source file for DannilMUD.
 #
 
-import sys
+import sys, traceback
 
 import dm.daemon.update_d as update_d
 
@@ -58,7 +58,13 @@ class DannilMUD:
 
     def main_loop(self):
         while True:
-            self.con_man.handle_one_event(self.parser.login_handler)
+            try:
+                self.con_man.handle_one_event(self.parser.login_handler)
+            except KeyboardInterrupt:
+                raise
+            except:
+                t, v, b = sys.exc_info()
+                traceback.print_exception(t, v, b)
 
 
 driver = DannilMUD()

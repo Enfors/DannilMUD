@@ -1,10 +1,26 @@
 * TODO Critical
 ** TODO Telnet protocol compliance
-*** TODO Negotiation
+*** DONE Negotiation
+    CLOSED: [2010-08-11 Wed 20:52]
 ** TODO World
-*** TODO Rooms
-**** TODO Walking around
-** Data storage
+*** DONE Rooms
+    CLOSED: [2010-08-11 Wed 20:53]
+**** DONE Walking around
+     CLOSED: [2010-08-11 Wed 20:52]
+*** TODO Area creation (dig)
+**** TODO Removing exits
+**** TODO Items
+***** TODO Command: Additem - create a new item
+***** TODO Command: Items - list all items here
+***** TODO Command: Delitem - delete an item
+*** TODO NPCs
+**** TODO Stand around doing nothing
+**** TODO Ability to execute commands
+** TODO Communication
+*** TODO Tells
+*** TODO Channels
+** DONE Data storage
+   CLOSED: [2010-08-11 Wed 20:57]
 *** DONE Create object
     CLOSED: [2010-07-26 Mon 00:28]
 *** DONE Create dictionary
@@ -26,9 +42,14 @@ If obj.set_prop() exists, call it instead of obj.set(prop)
 *** DONE Support custom query functions
     CLOSED: [2010-08-04 Wed 08:19]
 If obj.query_prop() exists, call it instead of obj.query(prop)
-
-** Daemons
-*** Plants
-*** Weather
+** TODO Commands
+*** TODO Hard-coded aliases
+** TODO Users
+*** TODO Time of creation and date
 * Essential
+** Processes
+*** Passage of time
 * Basic
+** TODO Daemons
+*** TODO Plants
+*** TODO Weather
