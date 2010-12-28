@@ -1,6 +1,6 @@
 # user_char.py by Dannil
 
-import os, pickle
+import os, pickle, time
 
 import dm.obj.body        as body
 import dm.daemon.update_d as update_d
@@ -12,6 +12,7 @@ class UserChar(body.Body):
         self.set_con(con)
         self.set("long", "%s is a generic-looking user." %
                  self.query_cap_name())
+        self.set("last_login", time.time())
 
     
     def update(self):

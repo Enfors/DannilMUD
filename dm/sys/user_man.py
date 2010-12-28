@@ -1,6 +1,6 @@
 # user_man.py by Dannil
 
-import os
+import os, time
 
 import dm.daemon.update_d as update_d
 import dm.obj.user_char   as user_char
@@ -16,6 +16,7 @@ class UserMan:
 
         if new_user:
             user.set("short", name.capitalize())
+            user.set("created_at", time.time())
         else:
             user = user.load()
             user.update()

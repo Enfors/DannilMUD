@@ -1,5 +1,7 @@
 # status.py by Dannil
 
+import time
+
 import dm.cmd.player.player_cmd as player_cmd
 
 class Cmd(player_cmd.PlayerCmd):
@@ -21,5 +23,8 @@ class Cmd(player_cmd.PlayerCmd):
             disp += "Yes\n"
         else:
             disp += "No\n"
+
+        if body.query("created_at"):
+            disp += "Created: %s\n" % time.ctime(body.query("created_at"))
 
         body.recv_text(disp)
