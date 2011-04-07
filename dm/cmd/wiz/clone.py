@@ -14,6 +14,7 @@ class Cmd(wiz_cmd.WizCmd):
     
 
     def clone(self, body, path):
+        print("Path: ", path)
         mod = __import__("dm." + path.replace("/", "."))
 
         obj = eval("mod.%s.clone()" % path.replace("/", "."))

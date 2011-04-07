@@ -140,7 +140,7 @@ class CmdParser:
 
         if len(input) == 0:
             raise IncorrectInput("I was expecting a \"%s\" somewhere "
-                                 "in there.\n" % word)
+                                 "in there.\n" % rule_word)
 
         #input.pop(0)
         entered_word, input = self._pop_first(input)

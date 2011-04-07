@@ -45,7 +45,7 @@ If obj.query_prop() exists, call it instead of obj.query(prop)
 ** TODO Commands
 *** TODO Hard-coded aliases
 ** TODO Users
-*** TODO Time of creation and date
+*** DONE Time of creation and date
 * Essential
 ** Processes
 *** Passage of time
