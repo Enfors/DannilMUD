@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# ed.py by Dannil
+# edit.py by Dannil
 
 MODE_EDIT = 1
 

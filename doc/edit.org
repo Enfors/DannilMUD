@@ -2,20 +2,19 @@
 
 The editor is divided into two different editors.
 
-- ed, the simple "restricted" editor for players, which only allows
+- edit, the simple "restricted" editor for players, which only allows
   you to write a text and exit. Meant for writing mails, and the like.
-- edit, the advanced editor (well, as advanced as you get with a
-  frickin line based editor hacked together by an amateur) which
-  inherits from edit, and extends it with commands to save and load
-  files, etc.
+- ed, the advanced editor (well, as advanced as you get with a frickin
+  line based editor hacked together by an amateur) which inherits from
+  edit, and extends it with commands to save and load files, etc.
 
 In both cases, the function start() is called when the editor starts.
 
-In the case of ed, this function activates "append lines" mode ("a",
+In the case of edit, this function activates "append lines" mode ("a",
 in UNIX ed), and then exits returning the entered string when the user
 signifies that he or she doesn't want to add any more text.
 
-Edit redefines the start() function, putting the user in command mode
+Ed redefines the start() function, putting the user in command mode
 first.
 
 
