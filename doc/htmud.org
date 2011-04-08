@@ -31,6 +31,9 @@ member functions in the same class are allowed to call such functions.
 Variable names consist of one or more all lowercase words, separated
 by underscores. Example: user_name
 
+The same rules apply to private (internal) variables, but their names
+are prepended by two underscores. Example: __user_name
+
 ** File and module structure
 ** Code architecture
 *** Overview

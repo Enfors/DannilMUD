@@ -4,6 +4,8 @@
 Subdirectories, and their purpose:
 
   * cmd    - MUD commands.
+  * daemon - Daemons - non-game objects with administrative puruposes.
+  * evt    - Event objects.
   * obj    - MUD objects.
   * sys    - System components such as networking, user management, etc.
   * user   - Saved user files.
