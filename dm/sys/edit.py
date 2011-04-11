@@ -3,7 +3,7 @@
 
 MODE_EDIT = 1
 
-class Ed:
+class Edit:
     def __init__(self,
                  output_func : "The function output is sent to.",
                  end_func    : "Called when the editor exits."
@@ -14,11 +14,11 @@ class Ed:
         # 1. Otherwise, line number one would have index 0 and there
         # would be conversions all over the place.
 
-        self.output_func  = output_func
-        self.end_func     = end_func
-        self.lines        = [ "" ]
-        self.cur_line_num = 0
-        self.mode         = MODE_EDIT
+        self.output_func   = output_func
+        self.end_func      = end_func
+        self.lines         = [ "" ]
+        self._cur_line_num = 0
+        self.mode          = MODE_EDIT
 
 
     def start(self):
@@ -47,6 +47,23 @@ class Ed:
         self.cur_line_num += 1
         
 
+    def insert_lines(self, before_line_num, new_lines):
+        if before_line_num == 0:
+            before_line_num = 1
+
+        self._add_lines(before_line_num, new_lines)
+
+
+    def append_lines(self, after_line_num, new_lines):
+        self._add_lines(after_line_num + 1, new_lines)
+
+
+    def _add_lines(self, before_line_num, new_lines):
+        for line in reversed(new_lines):
+            self.lines.insert(before_line_num, line)
+
+
+
 def output_func(line):
     print(line, end = "")
 
@@ -59,8 +76,8 @@ def end_func(lines):
 
 
 if __name__ == "__main__":
-    ed = Ed(output_func, end_func)
-    ed.start()
+    edit = Edit(output_func, end_func)
+    edit.start()
 
     while True:
         line = input()
