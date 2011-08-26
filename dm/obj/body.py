@@ -3,6 +3,18 @@
 import dm.obj.container   as container
 import dm.daemon.update_d as update_d
 
+all_stats = ("dex", "end", "con", "str", "per", "foc", "int")
+
+long_stat_names = {
+    "dex" : "dexterity",
+    "end" : "endurance",
+    "con" : "contitution",
+    "str" : "strength",
+    "per" : "perception",
+    "foc" : "focus",
+    "int" : "intelligence"
+    }
+
 class Body(container.Container):
     def __init__(self):
         container.Container.__init__(self)
@@ -29,6 +41,7 @@ class Body(container.Container):
         text = text_d.convert_tag_text(text, self, None, 76, 
                                        indent1, indent2, leading_nl)
         return self.recv_text(text)
+
 
     def do_look(self):
         room = self.query_env()
@@ -71,3 +84,40 @@ class Body(container.Container):
 
         if not "ids" in self.props:
             self.props["ids"] = [ self.query_name() ]
+
+        if not "stats" in self.props:
+            stats = {
+                "dex" : 10,
+                "end" : 10,
+                "con" : 10,
+                "str" : 10,
+                "per" : 10,
+                "foc" : 10,
+                "int" : 10
+                }
+
+            self.set("stats", stats)
+
+
+    def set_stat(self, stat, value):
+        self.props["stats"][stat] = value
+        
+        return value
+
+
+    def query_stat(self, stat):
+        return self.props["stats"][stat]
+
+
+    def query_stats_disp(self):
+        """Return a string containing our stats, suitable for printing."""
+        
+        disp = ""
+
+        stats = self.props["stats"]
+
+        for stat in all_stats:
+            disp += "%-13s: %3d\n" % (long_stat_names[stat].capitalize(),
+                                      stats[stat])
+
+        return disp

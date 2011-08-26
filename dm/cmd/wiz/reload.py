@@ -17,4 +17,8 @@ class Cmd(wiz_cmd.WizCmd):
 
 
     def rule_reload_STR(self, user, args):
-        update_d.update_d.reload_module(args[0])
+        if update_d.update_d.reload_module(args[0]):
+            user.recv_text("Done.\n")
+        else:
+            user.recv_text("Operation failed.\n")
+

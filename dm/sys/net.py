@@ -293,8 +293,8 @@ class ConMan:
             self.handle_one_event(input_handler)
 
 
-    def handle_one_event(self, input_handler):
-        result = self.poller.poll()
+    def handle_one_event(self, input_handler, timeout = None):
+        result = self.poller.poll(timeout)
         for fd, event in result:
             if fd == self.listen_sock.fileno() and \
                     event == select.POLLIN:

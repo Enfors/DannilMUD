@@ -48,11 +48,14 @@ class UpdateD(base_daemon.Daemon):
 
         if not module_path in self.modules:
             print("[update_d] Module not loaded.\n")
+            print("Modules: %s\n" % self.modules)
             return False
 
         imp.reload(sys.modules["dm.%s" % module_path])
 
         self.objects[module_path] = { }
+
+        return True
 
 
 update_d = UpdateD()

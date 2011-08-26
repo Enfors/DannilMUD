@@ -24,6 +24,8 @@ class Cmd(player_cmd.PlayerCmd):
         else:
             disp += "No\n"
 
+        disp += "\n" + body.query_stats_disp() + "\n"
+
         if body.query("created_at"):
             disp += "Created: %s\n" % time.ctime(body.query("created_at"))
 

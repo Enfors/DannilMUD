@@ -400,6 +400,11 @@ Existing procedure:
 - At logout
   - stored_age = stored_age + now - last_login
 
+** Class tree
+*** base
+**** container
+***** living
+****** body
 ** Relationship between DannilMUD and HollowTreeMUD
 I'm currently leaning towards not dividing the game into "driver" and
 "mudlib". The advantage of the division would be that it would be
@@ -450,6 +455,17 @@ driver? Probably, yes.
 
 
 * Game design
+** Intro to game mechanics
+The game attempts to mimic the feel of pen & paper roleplaying games
+as much as reasonably possible. Therefore, the game emulates actual
+dice (d2, d3, d4, d6, d10 and d20) when random numbers are needed.
+
+In most cases, it is advantageous for players to roll low numbers when
+making dice rolls. The typical case is making a skill roll by rolling
+a d20, which is successful if the result is equal to or less than the
+player's skill value. Rolloing for damage is an exception though - in
+this case the player wants high numbers.
+
 ** Characters
 *** Stats
 Stats are intrinsic values that all characters have. They are
@@ -457,6 +473,20 @@ different from skills in that skills are something you learn.
 
 Stat values range from 0 and upwards without a set maximum. The
 typical average value for a humanoid is 10.
+
+**** Stat rolls and modifiers
+When a stat roll is made, a modifier is used. The modifier represents
+the difficulty of this particular task. A positive modifier means that
+the task is relatively easiy, while a negative modifier means that the
+task is relatively difficult. To make a stat roll, roll 3d6. If the
+result is lower than or equal to the character's skill value plus the
+modifier (which is pytically between -10 and +10), then the roll was a
+success. In other words:
+
+  - result = stat value + modifier - 3d6
+
+If the result is a positive number or zero, the stat roll succeeds by
+that many points. Otherwise, it fails.
 
 **** Agility
 How "flexible" the character's body is. Not sure if I want to keep
@@ -499,17 +529,28 @@ Skill values range from 0 (don't have the skill) to a maximum of 20.
 
 **** Skill roll (sr) and mofidiers
 When a skill roll is made, a modifier is used. The modifier represents
-the difficulty of this particular task. A positive modifier meas that
+the difficulty of this particular task. A positive modifier means that
 the task is relatively easy, while a negative modifier means that the
 task is relatively difficult. To make a skill roll, roll 3d6. If the
 result is lower than or equal to the character's skill value plus the
 modifier (which is typically between -10 and +10), then the roll was a
 sucess. In other words:
 
- - result = skill value + modifier - 3d6
+  - result = skill value + modifier - 3d6
 
 If result is a positive number or zero, the skill roll succeeds by
 that many points. Otherwise, it fails.
+
+**** Combined skill rolls
+Sometimes an activity takes many skills. For example, swinging a sword
+takes two skills - the "Swing" (action) skill, and the "Sword"
+(weapon) skill. In that case, a skill roll is performed for each skill
+involved and the lowest result is the result of the combined skill
+roll. So in the above example, if the "Swing" skill roll result is 5
+and the "Sword" skill roll result is 2, then the combined skill roll
+result is 2 - the lower of the two.
+
+A combined skill roll may involve more than two skills.
 
 **** Skill costs
 | Stat | Very easy | Easy | Average | Hard | Very hard |
@@ -530,6 +571,264 @@ that many points. Otherwise, it fails.
 |   +7 |         6 |    8 |      10 |   13 |        17 |
 
 ** Combat
+*** Basic combat mechanics
+Combat is turn based. At each turn, all combatants have 30 seconds to
+decide what they want to attempt to do, and then combat is resolved
+and the result is displayed. Different kind of activities take
+different amounts of time to perform (a thrust with a sword is faster
+than drawing and shooting an arrow).
+
+To explain fully how combat works, I will first explain a simplified
+model of the system. Then I will gradually add more and more details
+in the following sections.
+
+*** Actions
+Each turn, the combatants can choose one Action. An Action could be
+thrusting or swinging a sword, parrying, drinking a potion, casting a
+spell or a number of other similar activities. The trick is to try to
+be faster than your opponent - if your attack is faster than your
+opponent's Parry, then your attack will be successful. Actions have
+different base times, which affect how long they take. Your skills
+(values between 1 and 20, where 20 is the best) will also affect how
+quickly your Actions resolve.
+
+Let's examine how long it would take you to perform a sword thrust.
+First, you must make a Skill Roll (d20 is a twenty-sided die):
+
+  SkillRoll = SkillValue + StatModifier - 2d10
+
+Then, we can compute how long the thrust Action will take:
+
+  completion_time = 40 + ThrustBaseTime - SkillRoll
+
+Similarly, if you opponent attempts to parry at the same time:
+
+  completion_time = 40 + ParryBaseTime - SkillRoll
+
+If the completion_time of the opponent's parry is lower than the
+completion_time of your thrust, he will have successfully parried
+your attack. Otherwise, your attack hits.
+
+*** Balance
+Now, let's add the concept of Balance. Balance is a value between 1
+and 20. If your Balance is 20, you're at perfect balance. If it's 1,
+you're totally off balance. Your Balance is always added to your
+Actions' comletion_time, so the better your Balance is, the faster
+your Actions will be. All Actions will cause you to lose an amount
+of Balance depending on the nature of the Action. Swinging a heavy
+sword will cause you to lose more Balance than shooting a bow.
+
+So let's add Balance to the completion_time formula:
+
+  completion_time = 40 + ThrustBaseTime + Balance - SkillRoll
+
+Generally speaking, attacking Actions take longer to complete (they
+have longer BaseTimes) than defensive ones. Since your Balance affect
+how long your Actions take to complete, attacks are unlikely to hit
+(read: resolve before the opponent's Parry does) unless you have a
+Balance advantage (given equal opponents on other respects). But after
+your attack, your opponent is likely to have better Balance than you
+since his defense cost less Balance than your attack did. This means
+he will probably attack now, so it's probably a good idea for you to
+Parry now.
+
+This way, opponents typically "take turns" attacking each other.
+
+*** Distance and movement
+The game keeps track of the distance between you and your opponent(s).
+The distances are as follows:
+
+- 1: short
+
+- 2: average
+
+- 3: long
+
+- 4: very long
+
+The distance between you and your opponent affect which Actions can
+be taken, as well as which weapons are able to reach your opponent.
+To change the distance between you and your opponent, we must
+introduce the concept of Movement.
+
+As has been previously explained, all combatants can take one Action
+per turn. But it is also possible to choose one Movement as well,
+which will be resolved before your Action. The basic Movements are as
+follows:
+
+- Charge: Moves you all the way to your oppoent, setting the distance
+to "short" and giving you an attack bonus and defense penalty, both
+lasting until the end of the turn.
+
+- Advance: moves you one step closer to your opponent.
+
+- Retreat: moves you one step away from your opponent.
+
+- Flee: moves you as far away as possible from your opponent, setting
+the distance to "very long".
+
+There are Actions that can be taken that attempt to limit your opponent's
+Movements. Let's say you have a spear, and your opponent has a shortsword.
+Since your spear has a longer reach (read: can successfully hit from longer
+distances) than your oppoent's shortsword, you can use Actions that try
+to prevent him from closing the distance. However, your opponent is likely
+to try to out-maneuver you and use Actions that attempts to "brush aside"
+your spear so that he can use Movements to get closer to you. 
+
+*** Combat mode
+When someone is attacked, the room they're in enters Combat mode. This
+means that time "slows down" in that room, so that the heart beats of
+the characters in the room occur at the end of each combat turn,
+instead of every two seconds which is the normal out-of-combat heart
+beat rate. This is what prevents characters from completing multiple
+Actions in the same turn since you cannot perform more than one Action
+per heart beat.  Remember, not all Actions are strictly combat
+Actions - for example, a potion could be drunk in combat and out of
+combat. Some Actions are strictly Combat Actions though and when they
+are invoked outside of combat, combat mode is initiated in the room.
+
+*** Targetting
+Before you can attack someone, you must target them. Targeting is an
+Combat Action, meaning the room will enter combat mode if it's not
+already active in the room when the command is issued. Targeting
+commands are always resolved at the end of the turn after all other
+Combat Actions have been resolved. Also, you are always notified when
+someone targets you. Because of this, you can never be attacked
+completely out of the blue - you will always get the chance to at
+least issue a parry or dodge Action to defend yourself.
+
+However, when someone targets you (which will occur at the end of a
+round), you will not be able to take an offensive Action towards them
+in the consecutive turn (you will still be able to take offensive
+action against someone else who is your current target). If someone
+targets you and you don't have an active target, your attacker will
+automatically become your target.
+
+Let's look at an example.
+
+An attacker targets a defender by typing "target defender" in a room
+where no combat is currently taking place.
+
+Since the defender didn't already have a target, the attacker now
+becomes the defender's target. Combat is now initiated, and round one
+starts. The combatants are asked to choose their Actions and
+Movements.
+
+Since the attacker targeted the defender in the previous (non-combat)
+turn, the defender can not try to hit the attacker in this turn. The
+defender has to take a defensive Action such as parry or dodge
+instead. This means that the attacker gets to make the first attack.
+
+So, even if the attacker was prevented from outright hitting the
+defender without the defender being able to even try to parry or
+dodge, the attacker is still granted the right to attack first.
+
+*** Sizes and fighting multiple targets
+All characters have a size. The default size for human males is 10,
+and 9 for females.
+
+Because of space constraints, there is a limit to how many people can
+attack you at the same time. That limit is your size times 3. If your size
+is 10, then the total sum of your simultaneous attackers can not be more than
+30. You can not target an opponent if your size plus the opponent's
+current attackers' sizes amount to more than 3 times the opponent's
+size.
+
+But there is an exception that says that under all circumstances, you
+can always target someone who is only being targeted by 1 or zero, no
+matter the sizes involved. Think of it this way - even if a gnome is
+miniscule next to an ogre, two ogres can always attack a gnome
+simultaneously from opposite sides.
+
+Even though many characters can target the same opponent under the
+constraints outlined above, a single character can never target more
+than one other target at a time. So how do you defend against
+multiple attackers, if you can only target one of them at a time?
+
+Let's say you're attacked by three people, who all choose the thrust
+Action. You choose the Action dodge. Your CompletionTime for the
+dodge is computed to 20 "ticks", which means that 20 ticks into the
+turn your dodge will become active. So, if the fastest attacker's
+CompletionTime is 25, he will miss. But now you will need some recovery
+time before you can dodge again, and that recovery time is your
+CompletionTime divided by 2 (20 / 2 = 10). So, 10 ticks later, at
+tick 35, your dodge becomes active again. If the second fastest
+attacker's CompletionTime is less than 35, he will miss. Otherwise,
+you will dodge his attack too.
+
+So far so good. But with three attackers taking turns attacking you,
+when will you ever get the chance to take an offensive Action so you
+actually get a chance to hit them back?
+
+To do this, you can use a special form of Action that is both
+offensive and defensive such as riposte. A riposte is a parry
+quickly followed by a counter-attack.
+
+*** Formations - organized group combat
+When characters form a group, they can optionally fight using
+formations.  This means that they all stand in a fixed position in
+relation to their fellow group members. The group leader can issue
+commands to change formations or to have two characters swap positions
+within the current formation. To comply with the order, the affected
+individuals issue a special "comply" Movement command, which
+automatically moves them to the correct position. If they don't issue
+this command when ordered, they will be automatically removed from the
+formation and thereby lose the benefits it provides.
+
+When one formation attacks another, the individuals in the formations
+will not be able to target whomever they please. If you are standing
+in the middle of a line formation (let's say 5 characters standing in
+a line, facing 90 degrees away from the direction of the line) and you're
+fighting another group in the same formation, you can only target opponents
+who are standing near the middle of their formation. And if you're standing
+in the westernmost position in your line formation, you can only attack the
+characters closest to the westernmost end of their line formation. The only
+exception is if you're using ranged weaponry such as bows, crossbows or
+long range spells.
+
+One of the advantages of fighting in a formation is that when you do,
+the limit on how many characters can attack you is reduzed from the
+normal max of your size times 3, to your size times 2. This is because
+you have friends standing next to you, guarding your flanks which
+reduces the space available for your attackers. But this rule is
+negated if your formation is only one rank thick, and you're attacked
+both from the rear and the front at the same time.
+
+There is also an advantage to not fighting in a formation however, and
+that is that then each group member can choose their own targets
+individually, instead of following their formation around and fighting
+whomever they happen to end up in front of.
+
+*** Multi-layered combat
+Using this system, combat can be said to be fought in many layers. Let's
+compare the characters to soldiers, and the groups to squads.
+
+The individual soldiers are fighting man-to-man, on layer one.
+
+The squad leaders are fighting on layer 2, trying to out-maneuver the
+opposing squads using well-timed formation changes, perhaps trying to
+outflank the opposing formation to get at their vulnerable casters in
+the rear rank. They can also move individual soldiers around in the
+formation, attempting to use each soldier where they do the most good.
+
+Platoon leaders are fighting on layer 3, by telling their squad leaders
+where to go and which groups to attack.
+
+
+** Ideas
+*** Sizes
+| Size | Description                 | Animal                    |
+|------+-----------------------------+---------------------------|
+|    1 | Coin                        | Beetle, fly               |
+|    2 | Fist-sized object, A4 paper | Squirrel, rat, small bird |
+|    3 | Shortsword, book            | Rabbit                    |
+|    4 | Longsword, shield           | Cat, large bird           |
+|    5 | Dog                         | Dog, sheep, deer          |
+|    6 | Dwarf                       | Wolf                      |
+|    7 | Human                       | Pony, human               |
+|    8 | Orc                         | Cow                       |
+|    9 | Horse, bear                 | Horse, bear               |
+|------+-----------------------------+---------------------------|
 *** Bodies
 **** Humanoid
 ****** Humanoid body configuration
@@ -568,21 +867,5 @@ chance of being hit is halved (round downards) for each successive
 hitting the chest instead, but only a 7% chance (half of 15%) of
 hitting the left leg.
 
-*** Formulas
 *** Missile weapon accuracy (accuracy)
 - Result = sr + accuracy + target's size - 10
-
-** Ideas
-*** Sizes
-| Size | Description                 | Animal                    |
-|------+-----------------------------+---------------------------|
-|    1 | Coin                        | Beetle, fly               |
-|    2 | Fist-sized object, A4 paper | Squirrel, rat, small bird |
-|    3 | Shortsword, book            | Rabbit                    |
-|    4 | Longsword, shield           | Cat, large bird           |
-|    5 | Dog                         | Dog, sheep, deer          |
-|    6 | Dwarf                       | Wolf                      |
-|    7 | Human                       | Pony, human               |
-|    8 | Orc                         | Cow                       |
-|    9 | Horse, bear                 | Horse, bear               |
-|------+-----------------------------+---------------------------|

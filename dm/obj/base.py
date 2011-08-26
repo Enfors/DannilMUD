@@ -159,7 +159,17 @@ RETURNS:
         finally:
             file.close()
 
+        self.post_load_setup()
+
         return True
+
+
+    def post_load_setup(self):
+        """This function is always called after the object is loaded.
+        Its primary purpose is to be overloaded by "leaf" objects in
+        order to be able to set things up after the object has been
+        loaded."""
+        pass
 
 
     def query_ref(self):

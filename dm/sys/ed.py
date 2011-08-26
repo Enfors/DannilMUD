@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # ed.py by Dannil
 
-import edit
+import re
+import dm.sys.edit as edit
 
 MODE_COMMAND = 2
 
@@ -88,21 +89,23 @@ class Ed(edit.Edit):
 
         self._command = Command(start, end, cmd, args)
 
-        #print("{0},{1}: {2} {3}".format(start, end, cmd, args))
+        print("{0},{1}: {2} {3}".format(start, end, cmd, args))
 
         if cmd == "a":
-            self._command_append()
+            self._command_append(start, end)
         elif cmd == "p":
-            self._command_print()
+            self._command_print(start, end)
         elif cmd == "q":
             self._command_quit()
 
+        self._cur_line_num = self._command.query_start()
 
-    def _command_append(self):
+
+    def _command_append(self, start, end):
         start = self._command.query_start()
         end   = self._command.query_end()
 
-        if start != end:
+        if end:
             self.output_func("[Can't use range with append.]\n")
             return
         
@@ -110,17 +113,16 @@ class Ed(edit.Edit):
         self._enter_edit_mode()
 
 
-    def _command_print(self):
-        for num, line in enumerate(self.lines):
-            if num == 0:
-                continue        # Never show line 0
-            self.output_func("{0:4d}: {1}\n".format(num, line))
+    def _command_print(self, start, end):
+        for num, line in enumerate(self.lines[start:end + 1]):
+            self.output_func("{0:4d}: {1}\n".format(start + num, line))
 
 
     def _command_append_end(self):
         num_lines_added = len(self._edit_lines)
 
-        self.append_lines(self._cur_line_num, self._edit_lines)
+        self.append_lines(self._command.query_start(),
+                          self._edit_lines)
 
         self.output_func("[Lines added: {0}.]\n".format(num_lines_added))
         self._set_cur_line_num(self._cur_line_num + num_lines_added)
@@ -132,7 +134,23 @@ class Ed(edit.Edit):
 
 
     def _parse_address(self, text):
-        return self._cur_line_num, self._cur_line_num, text
+        # Match number comma number, like "2,5":
+        match = re.search(r"^(\d+)?,?(\d+)?", text)
+
+        start = end = None
+
+        if match.group(1):
+            start = int(match.group(1))
+
+        if match.group(2):
+            end   = int(match.group(2))
+
+        text  = text[len(match.group(0)):]
+
+        if not start:
+            start = self._cur_line_num
+
+        return start, end, text
 
     
     def _parse_cmd(self, text):
