@@ -725,7 +725,7 @@ dodge, the attacker is still granted the right to attack first.
 
 *** Sizes and fighting multiple targets
 All characters have a size. The default size for human males is 10,
-and 9 for females.
+and 10 for females.
 
 Because of space constraints, there is a limit to how many people can
 attack you at the same time. That limit is your size times 3. If your size
