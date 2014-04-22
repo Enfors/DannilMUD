@@ -11,3 +11,4 @@ dm/sys/*.pyc
 dm/util/*.pyc
 dm/world/*
 test
+__pycache__

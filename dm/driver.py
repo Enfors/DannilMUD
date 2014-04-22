@@ -18,7 +18,7 @@ class DannilMUD:
         print("")
         print("  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
         print("  |                                                         |")
-        print("  | DannilMUD (C) Christer Enfors A.K.A. Dannil 2007 - 2010 |")
+        print("  | DannilMUD (C) Christer Enfors A.K.A. Dannil 2007 - 2014 |")
         print("  |                                                         |")
         print("  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
         print("")
