@@ -178,7 +178,7 @@ class CmdParser:
         tmp, rule = self._pop_first(rule)
 
         if len(input) == 0:
-            raise IncorrectInput("I was execting an object too.\n")
+            raise IncorrectInput("I was expecting an object too.\n")
 
         id, input = self._pop_first(input)
 
@@ -328,5 +328,3 @@ if __name__ == "__main__":
     wiz_cmds_dir = "/home/chenf/work/dm/dm/cmd/wiz"
     admin_cmds_dir = "/home/chenf/work/dm/dm/cmd/admin"
     cmd_parser = CmdParser()
-
-    
