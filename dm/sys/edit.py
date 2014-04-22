@@ -29,7 +29,7 @@ class Edit:
 
 
     def enter_append_mode(self):
-        self.cur_line_num += 1
+        self._cur_line_num += 1
         
 
     def user_input(self, text : "The text the user entered."):
@@ -44,7 +44,7 @@ class Edit:
 
 
         self.lines.append(text)
-        self.cur_line_num += 1
+        self._cur_line_num += 1
         
 
     def insert_lines(self, before_line_num, new_lines):
@@ -81,4 +81,4 @@ if __name__ == "__main__":
 
     while True:
         line = input()
-        ed.user_input(line)
+        edit.user_input(line)
