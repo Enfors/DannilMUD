@@ -38,10 +38,9 @@ class Edit:
             return
 
         if text == '"."':
-            self.output_func("You're not supposed to include the double "
-                             "quotes, but I'll let that slide for now.\n")
+            self.output_func("You weren't supposed to include the double "
+                             "quotes, but I'll let that slide.\n")
             self.end_func(self.lines[1:])
-
 
         self.lines.append(text)
         self._cur_line_num += 1
