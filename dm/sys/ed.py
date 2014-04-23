@@ -89,7 +89,7 @@ class Ed(edit.Edit):
 
         self._command = Command(start, end, cmd, args)
 
-        print("{0},{1}: {2} {3}".format(start, end, cmd, args))
+        print("{0},{1}: Command: {2} Argument: {3}".format(start, end, cmd, args))
 
         if cmd == "a":
             self._command_append(start, end)
@@ -135,22 +135,41 @@ class Ed(edit.Edit):
 
     def _parse_address(self, text):
         # Match number comma number, like "2,5":
-        match = re.search(r"^(\d+)?,?(\d+)?", text)
+        match = re.search(r"^(\d+)?(,)?(\d+)?(.*)", text)
 
         start = end = None
+        num_lines   = len(self.lines)
 
-        if match.group(1):
+        if match.group(2):       # If there's a comma:
+            if match.group(1):
+                start = int(match.group(1))
+            else:
+                start = 1
+            
+            if match.group(3):
+                end = int(match.group(3))
+            else:
+                end = num_lines
+        elif match.group(1):     # If there is no comma but a number:
             start = int(match.group(1))
-
-        if match.group(2):
-            end   = int(match.group(2))
-
-        text  = text[len(match.group(0)):]
-
+            
         if not start:
             start = self._cur_line_num
 
-        return start, end, text
+        remaining_text = match.group(4)
+
+        if remaining_text is None:
+            remaining_text = ""
+
+        print("_parse_address(): Start: %s, end: %s." % (str(start), str(end)))
+
+        if start < 1:
+            start = 1
+
+        if end is not None and end > num_lines:
+            end = num_lines
+
+        return start, end, remaining_text
 
     
     def _parse_cmd(self, text):
